@@ -203,13 +203,12 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
     <h2>Why</h2>
     <div class="card" id="why"></div>
 
-    <details><summary>Patterns to watch<span class="chev"></span></summary><div class="dbody" id="patterns"></div></details>
 
     <button class="btn primary" id="open-hb">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
       Open full handbook
     </button>
-    <div class="small muted" style="text-align:center;margin-top:8px">Beast Protocol v3 · effective 12 Nov 2026</div>
+    <div class="small muted" style="text-align:center;margin-top:8px">Beast Protocol v3 · updated 13 Nov 2026</div>
   </div>
 
   <!-- SKILL -->
@@ -430,7 +429,7 @@ const DAILY=[
 const BENCH=[
   {k:'Bodyweight',now:'70.0kg',target:'73–75kg',wide:1},
   {k:'Press',now:'25 × 7',target:'30 × 8'},
-  {k:'Squat',now:'',target:''},
+  {k:'Squat',now:'',target:'140–145kg'},
   {k:'Pull-ups',now:'5',target:'10'},
   {k:'Dips',now:'',target:'15'}
 ];
@@ -476,9 +475,9 @@ const PROGRAM=[
   ]},
   {name:'Legs',days:'Mon',ex:[
     ['Single-leg glute bridge, left first','2 × 10 · easy'],
-    ['Trap bar deadlift, high handles','3 × 4–6 · RIR 1–2, last TF · 3 min','Feet straight, narrow. Tail back, head forward. Push the floor away. Finish tall without thrusting the hips.'],
+    ['Box back squat, safety bars set','3 × 4–6 · RIR 1–2, last TF · 3 min · ~90–95kg, box ~5cm below knee','Feet straight and narrow (slight turn-out only if needed). Brace 360. Sit tail back to the box, touch without collapsing, drive up. Head forward. Stop above any tailbone tuck. Lower the box 2–3cm whenever all sets hit 6.'],
+    ['Smith RDL','3 × 6–8 · RIR 1–2 · 2–3 min','Tail back, head forward, soft knees. Stop when the hamstrings stretch fully, back neutral.'],
     ['Smith Bulgarian split squat, left first','3 × 6–8 · RIR 1 · 2 min','Front foot straight, inner ankle high. Sit into the front hip, knee out over the toes (bow). Release as you stand.'],
-    ['RDL','2 × 6–8 · RIR 2 · 2 min · 70kg, recheck','Tail back, head forward, soft knees. Stop when the hamstrings stretch fully.'],
     ['Standing single-leg calf raise, left first','3 × 10–15 · last to failure · 60s'],
     ['Ab crunch machine','2–3 × 10–15 · last to failure · 60s']
   ],note:'Feet straight and narrow. Tail back, head forward. Inner ankle high. Bow as you load, release as you stand. No leg press, no leg extension, no toes-out.'},
@@ -564,7 +563,7 @@ $('program').innerHTML=PROGRAM.map(p=>'<details><summary>'+p.name+'<span class="
 document.querySelectorAll('.ex.hascue').forEach(e=>e.onclick=()=>e.classList.toggle('open'));
 $('routines').innerHTML=ROUTINES.map(r=>'<details><summary>'+r.name+'<span class="chev"></span></summary><div class="dbody"><ol class="steps">'+r.steps.map(s=>'<li>'+s+'</li>').join('')+'</ol></div></details>').join('');
 $('why').innerHTML=WHY.map(q=>'<div class="quote">'+q+'</div>').join('');
-$('patterns').innerHTML=PATTERNS.map(p=>'<div class="line">'+p+'</div>').join('');
+
 
 $('today-card').onclick=()=>{
   const d=now.getDay(),mainName=MAINDAY[d];let h='';
