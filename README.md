@@ -1,1 +1,2 @@
-# perfectchaos
+# PerfectChaos
+Personal accountability app.
