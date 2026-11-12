@@ -8,6 +8,8 @@
 <meta name="theme-color" content="#000000">
 <title>PerfectChaos</title>
 <meta name="apple-mobile-web-app-title" content="PerfectChaos">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <style>
@@ -19,7 +21,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text)}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+body{font-family:"Archivo",-apple-system,BlinkMacSystemFont,sans-serif;font-weight:500;font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .app{max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 96px)}
 .view{display:none}.view.on{display:block;animation:fade .25s ease}
@@ -27,12 +29,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* header */
 .eyebrow{color:var(--dim);font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
-h1{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:2px 0 16px}
-h2{font-size:13px;font-weight:600;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin:28px 4px 10px}
+h1{font-size:36px;font-weight:800;letter-spacing:-.025em;margin:2px 0 16px}
+h2{font-size:13px;font-weight:700;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin:28px 4px 10px}
 
 /* segmented */
 .seg{display:flex;background:var(--card2);border-radius:10px;padding:2px;margin-bottom:18px}
-.seg button{flex:1;padding:7px 0;border-radius:8px;font-size:14px;font-weight:600;color:var(--dim);transition:all .2s}
+.seg button{flex:1;padding:7px 0;border-radius:8px;font-size:13px;font-weight:600;color:var(--dim);transition:all .2s}
 .seg button.on{background:#3a3a3c;color:var(--text)}
 .sub{display:none}.sub.on{display:block;animation:fade .25s ease}
 
@@ -40,7 +42,7 @@ h2{font-size:13px;font-weight:600;color:var(--dim);letter-spacing:.06em;text-tra
 .card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:10px}
 .card.hero{background:linear-gradient(160deg,#16161a,#0e0e10);border:1px solid var(--line)}
 .label{color:var(--dim);font-size:13px}
-.big{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.big{font-size:24px;font-weight:800;letter-spacing:-.01em}
 .muted{color:var(--dim)}
 .small{font-size:13px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -55,7 +57,7 @@ h2{font-size:13px;font-weight:600;color:var(--dim);letter-spacing:.06em;text-tra
 .check.done .box{background:var(--blue);border-color:var(--blue);transform:scale(1.06)}
 .check.done .box svg{stroke-dashoffset:0}
 .check.done .ct{color:var(--dim)}
-.check .ct{flex:1;font-size:15px}
+.check .ct{flex:1;font-size:16px;font-weight:600}
 .check .cs{font-size:12px;color:var(--faint)}
 .progress{height:4px;background:#232326;border-radius:4px;overflow:hidden;margin:12px 0 4px}
 .progress i{display:block;height:100%;background:var(--blue);border-radius:4px;transition:width .35s ease}
@@ -71,7 +73,7 @@ ol.steps li::before{content:counter(s);position:absolute;left:0;top:8px;width:22
 
 /* accordion */
 details{background:var(--card);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
-summary{list-style:none;padding:15px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600;cursor:pointer}
+summary{list-style:none;padding:15px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700;cursor:pointer}
 summary::-webkit-details-marker{display:none}
 summary .chev{width:9px;height:9px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .2s;margin-right:4px}
 details[open] summary .chev{transform:rotate(-135deg)}
@@ -95,7 +97,7 @@ summary .meta{color:var(--dim);font-weight:500;font-size:13px;margin-left:auto}
 .bm .t{color:var(--blue);font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
 
 /* quote */
-.quote{font-size:17px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.quote{font-size:18px;font-weight:700;line-height:1.35;letter-spacing:-.01em}
 .quote+.quote{margin-top:12px}
 .quote span{color:var(--blue)}
 
@@ -112,6 +114,27 @@ summary .meta{color:var(--dim);font-weight:500;font-size:13px;margin-left:auto}
 .counter button{width:32px;height:32px;border-radius:50%;background:var(--card2);font-size:18px;font-weight:600;display:grid;place-items:center}
 .counter .num{min-width:44px;text-align:center;font-variant-numeric:tabular-nums;font-size:14px;color:var(--dim)}
 
+/* bench tiles */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--card);border-radius:var(--r);padding:14px;text-align:left;width:100%}
+.tile.wide{grid-column:1/-1}
+.tile .tl{font-size:13px;color:var(--dim);font-weight:600}
+.tile .tv{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-top:2px;font-variant-numeric:tabular-nums}
+.tile .tt{font-size:13px;color:var(--blue);font-weight:700}
+.tile .tv.none{color:var(--faint)}
+/* skill tracks */
+.track .lvl{display:flex;gap:5px;margin:10px 0 2px}
+.track .lvl i{flex:1;height:4px;border-radius:4px;background:#232326}
+.track .lvl i.on{background:var(--blue)}
+.track .goal{font-size:20px;font-weight:800;letter-spacing:-.01em;margin-top:6px}
+.track .lv{padding:9px 0;border-top:1px solid var(--line);display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left}
+.track .lv .ln{flex:none;width:22px;height:22px;border-radius:50%;background:#232326;color:var(--dim);font-size:12px;font-weight:700;display:grid;place-items:center}
+.track .lv.done .ln{background:var(--blue);color:#fff}
+.track .lv.cur .ln{background:var(--blue-soft);color:var(--blue)}
+.track .lv.done .lt{color:var(--dim)}
+.track .lt{font-size:15px;font-weight:600}
+.track .ls{font-size:13px;color:var(--dim)}
+.input{font:inherit;font-size:22px;font-weight:700;background:var(--card2);color:var(--text);border:0;border-radius:12px;padding:12px 14px;width:100%;margin-top:6px}
 /* empty */
 .empty{text-align:center;padding:40px 20px;color:var(--dim)}
 .empty .big{color:var(--text);margin-bottom:6px}
@@ -145,27 +168,28 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
   <h1>Physical</h1>
   <div class="seg" id="seg-phys">
     <button data-sub="build">Build</button>
+    <button data-sub="skill">Skill</button>
     <button data-sub="release">Release</button>
     <button data-sub="care">Care</button>
   </div>
 
   <!-- BUILD -->
   <div class="sub" id="s-build">
-    <div class="card hero">
+    <button class="card hero" id="today-card" style="width:100%;text-align:left;display:block">
       <div class="row"><span class="label" id="day-name"></span><span class="pill" id="day-tag"></span></div>
       <div class="big" id="day-main" style="margin-top:4px"></div>
       <div class="muted small" id="day-home" style="margin-top:6px"></div>
-    </div>
+      <div class="small" style="color:var(--blue);font-weight:700;margin-top:10px">Open today's session ›</div>
+    </button>
 
     <h2>Daily</h2>
     <div class="card">
       <div id="daily"></div>
       <div class="progress"><i id="daily-bar"></i></div>
-      <div class="small muted" id="daily-count"></div>
     </div>
 
     <h2>Benchmarks</h2>
-    <div class="card"><div class="bm" id="bench"></div></div>
+    <div class="tiles" id="bench"></div>
 
     <h2>The five rules</h2>
     <div class="card"><ol class="steps" id="rules"></ol></div>
@@ -186,6 +210,12 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
       Open full handbook
     </button>
     <div class="small muted" style="text-align:center;margin-top:8px">Beast Protocol v3 · effective 12 Nov 2026</div>
+  </div>
+
+  <!-- SKILL -->
+  <div class="sub" id="s-skill">
+    <div class="small muted" style="margin:0 4px 12px">Hit the level, tap it, move up. Tap a lower level to step back.</div>
+    <div id="skills"></div>
   </div>
 
   <!-- RELEASE -->
@@ -295,6 +325,22 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
   <div class="sheet-body hb" id="hb-pages"></div>
 </div>
 
+<!-- today sheet -->
+<div class="sheet" id="day-sheet">
+  <div class="sheet-head"><b id="day-sheet-title">Today</b><button data-close="day-sheet">Done</button></div>
+  <div class="sheet-body" id="day-sheet-body"></div>
+</div>
+
+<!-- bench edit sheet -->
+<div class="sheet" id="bm-sheet">
+  <div class="sheet-head"><b id="bm-title">Update</b><button id="bm-save">Save</button></div>
+  <div class="sheet-body">
+    <div class="label">Now</div><input class="input" id="bm-now" autocomplete="off">
+    <div class="label" style="margin-top:16px">Target</div><input class="input" id="bm-target" autocomplete="off">
+    <button class="btn" data-close="bm-sheet">Cancel</button>
+  </div>
+</div>
+
 <!-- session sheet -->
 <div class="sheet" id="sess-sheet">
   <div class="sheet-head"><b>Session</b><button data-close="sess-sheet">Close</button></div>
@@ -375,26 +421,26 @@ const WEEK={
   0:{main:'Gym · Pull B',tag:'Pull',home:'Dips · scapular depressions · weekly review'}
 };
 const DAILY=[
-  {t:'Wake at the fixed time',s:'~8:30'},
+  {t:'Sunlight',s:'15–20 min walk'},
   {t:'Water',s:'400–500ml on waking'},
-  {t:'Sun walk',s:'15–20 min'},
-  {t:'90/90 breathing',s:'5 min · left emphasis'},
-  {t:'Priming drills'},
-  {t:'Single-leg stance',s:'while brushing teeth · left first'},
-  {t:'Creatine 6g',s:'with breakfast'},
-  {t:'Eat every 3–4 hours',s:'130g protein'},
-  {t:'Nose breathing',s:'+ 2–3 check-ins'},
-  {t:'Log today\'s session'},
-  {t:'Phone away',s:'30–60 min before lights out'},
-  {t:'Lights out',s:'8h before wake time'}
+  {t:'Creatine',s:'6g with breakfast'},
+  {t:'Mobility',s:'90/90 + release work'},
+  {t:'Debrief',s:'log today\'s session'}
 ];
 const BENCH=[
-  ['Bodyweight','70.0kg','73–75kg'],
-  ['Flat DB press','25 × 7','30 × 8'],
-  ['Strict pull-ups','~5','10'],
-  ['BOLT','~20s','25–30s'],
-  ['Ab wheel','3','progress'],
-  ['Left pistol','big gap','full depth']
+  {k:'Bodyweight',now:'70.0kg',target:'73–75kg',wide:1},
+  {k:'Press',now:'25 × 7',target:'30 × 8'},
+  {k:'Squat',now:'',target:''},
+  {k:'Pull-ups',now:'5',target:'10'},
+  {k:'Dips',now:'',target:'15'}
+];
+const SKILLS=[
+  {k:'Pull-ups',lv:[['5 strict','Starting point'],['10 strict','Full hang to chin over bar'],['5 chest-to-bar','Explosive pulls, 4–5 × 3']]},
+  {k:'Dips',lv:[['Find your max','Full depth, upright torso'],['15 full-depth','Muscle-up base'],['8–10 straight-bar dips','Power stage']]},
+  {k:'Muscle-up',lv:[['Base','10 pull-ups + 15 dips'],['Power','5 chest-to-bar + 8–10 straight-bar dips'],['Negatives','3 × 2–3, controlled, no drop'],['Muscle-up','Small kip first, then strict']],note:'Stop if the left shoulder hurts in the transition.'},
+  {k:'Pistol',lv:[['Box pistols, both legs','3 × 3–5, left first'],['Lower the box','A few cm every 1–2 weeks'],['Left pistol, full depth','The main left-side benchmark'],['Both legs, full depth','Right matches left']]},
+  {k:'Jump',lv:[['Mark your highest touch','Max approach jumps at the rim'],['Touch the rim'],['Grab the rim'],['Dunk']],note:'Raw day. Beat your mark. Speed and intent over volume.'},
+  {k:'Flips',lv:[['Parked','Phase 2. Not yet.']],parked:1}
 ];
 const RULES=[
   '<b>Left leads.</b> The right matches the left\'s weight and reps, never more.',
@@ -467,11 +513,13 @@ const ROUTINES=[
   {name:'Priming',steps:['Bear breathing × 5','Serratus wall push','Serratus punch, left first','Scapular pull-ups','Push-up plus (push days)']},
   {name:'Ramp sets',steps:['Light × 8–10','60–70% × 4–5','85–90% × 2–3','Working sets']},
   {name:'360 breath',steps:['In through the nose ~4s, ribs widen sideways and into the back','Out through the mouth ~6s until the ribs drop']},
-  {name:'No-whey shake',steps:['500ml milk','40g oats','2 tbsp peanut butter','1 banana + honey']}
+  {name:'Shake',steps:['500ml milk','40g oats','2 tbsp peanut butter','1 banana + honey']}
 ];
 const WHY=['“I want to get <span>strong as fuck</span>.”','“Strong, muscular, and <span>explosive</span>.”','“I don\'t want to just be toned. I want to get <span>big</span> too.”','“I have <span>no excuses</span> to not be the most consistent.”'];
 const PATTERNS=['Skipping legs','Going on and off with the gym','Waiting 4+ hours to eat','Late nights on the phone','Left shoulder hiking','Standing staggered, left leg back','Underloading out of caution (the “humble gimmick”)','Random easy reps instead of hard sets','Chasing feel or new exercise trends','Too many goals at once','Not logging numbers'];
 
+const HOMEDAYS={1:['Hard pull-ups','DB curl + hammer curl','Wrist curl + reverse curl','DB lateral raise, light','Easy pull-ups'],2:['Ab wheel, kneeling, full range','Push-up plus, hard','Box pistol, left first','Single-leg calf raise, weighted'],3:['Dips','Scapular depression on dip bars'],4:['Hard pull-ups','DB curl + hammer curl','Wrist curl + reverse curl','DB lateral raise, light','Ab wheel, kneeling, full range','Box pistol, left first','Supported split squat, left first','Cossack squat','Single-leg calf raise, weighted','Easy pull-ups'],5:['Easy pull-ups'],6:['Dips','Scapular depression on dip bars','DB lateral raise, light','Ab wheel, kneeling, full range','Push-up plus, hard'],0:['Dips','Scapular depression on dip bars']};
+const MAINDAY={1:'Legs',2:'Push',3:'Pull',5:'Push',6:'Raw day',0:'Pull'};
 /* ---------- render build ---------- */
 const now=new Date();
 const DN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -483,10 +531,32 @@ $('day-tag').textContent=w.tag;$('day-main').textContent=w.main;$('day-home').te
 checklist($('daily'),DAILY,S.daily,()=>{
   const n=DAILY.filter(d=>S.daily[d.t]).length;
   $('daily-bar').style.width=(n/DAILY.length*100)+'%';
-  $('daily-count').textContent=n+' of '+DAILY.length+' · resets tomorrow';
 });
 
-$('bench').innerHTML=BENCH.map(b=>'<span class="k">'+b[0]+'</span><span class="v">'+b[1]+'</span><span class="arrow">→</span><span class="t">'+b[2]+'</span>').join('');
+S.bench=S.bench||{};
+function bv(i){const o=S.bench[BENCH[i].k]||{};return {now:o.now!=null?o.now:BENCH[i].now,target:o.target!=null?o.target:BENCH[i].target}}
+function renderBench(){
+  $('bench').innerHTML=BENCH.map((b,i)=>{const v=bv(i);return '<button class="tile'+(b.wide?' wide':'')+'" data-i="'+i+'"><div class="tl">'+b.k+'</div><div class="tv'+(v.now?'':' none')+'">'+(v.now||'—')+'</div><div class="tt">→ '+(v.target||'set target')+'</div></button>'}).join('');
+  $('bench').querySelectorAll('.tile').forEach(t=>t.onclick=()=>{const i=+t.dataset.i,v=bv(i);S.bmEdit=i;$('bm-title').textContent=BENCH[i].k;$('bm-now').value=v.now;$('bm-target').value=v.target;$('bm-sheet').classList.add('on')});
+}
+renderBench();
+$('bm-save').onclick=()=>{const i=S.bmEdit;S.bench[BENCH[i].k]={now:$('bm-now').value.trim(),target:$('bm-target').value.trim()};save();renderBench();$('bm-sheet').classList.remove('on')};
+
+/* skills */
+S.skills=S.skills||{};
+function renderSkills(){
+  $('skills').innerHTML=SKILLS.map((x,si)=>{const c=Math.min(S.skills[x.k]||0,x.lv.length-1);const cur=x.lv[c];
+    return '<details class="card track" style="padding:0"'+(x.parked?'':'')+'><summary style="display:block"><div class="row"><span>'+x.k+'</span><span class="pill'+(x.parked?' grey':'')+'">'+(x.parked?'Parked':'Level '+(c+1)+' of '+x.lv.length)+'</span></div>'+
+    '<div class="goal"'+(x.parked?' style="color:var(--faint)"':'')+'>'+cur[0]+'</div>'+(cur[1]?'<div class="small muted">'+cur[1]+'</div>':'')+
+    (x.parked?'':'<div class="lvl">'+x.lv.map((_,j)=>'<i class="'+(j<=c?'on':'')+'"></i>').join('')+'</div>')+'</summary>'+
+    (x.parked?'':'<div class="dbody">'+x.lv.map((l,j)=>'<button class="lv '+(j<c?'done':j===c?'cur':'')+'" data-s="'+si+'" data-j="'+j+'"><span class="ln">'+(j<c?'✓':j+1)+'</span><span><div class="lt">'+l[0]+'</div>'+(l[1]?'<div class="ls">'+l[1]+'</div>':'')+'</span></button>').join('')+
+    (c<x.lv.length-1?'<button class="btn primary" data-up="'+si+'">Hit it · level up</button>':'<div class="small" style="color:var(--blue);font-weight:700;margin-top:10px">Top level. Own it.</div>')+
+    (x.note?'<div class="small muted" style="margin-top:10px">'+x.note+'</div>':'')+'</div>')+'</details>'}).join('');
+  $('skills').querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{const x=SKILLS[b.dataset.up];S.skills[x.k]=Math.min((S.skills[x.k]||0)+1,x.lv.length-1);S.openSkill=x.k;save();renderSkills()});
+  $('skills').querySelectorAll('.lv').forEach(b=>b.onclick=()=>{const x=SKILLS[b.dataset.s],j=+b.dataset.j;if(j<(S.skills[x.k]||0)){S.skills[x.k]=j;S.openSkill=x.k;save();renderSkills()}});
+  if(S.openSkill){const i=SKILLS.findIndex(x=>x.k===S.openSkill);const d=$('skills').querySelectorAll('details')[i];if(d)d.open=true}
+}
+renderSkills();
 $('rules').innerHTML=RULES.map(r=>'<li>'+r+'</li>').join('');
 $('program').innerHTML=PROGRAM.map(p=>'<details><summary>'+p.name+'<span class="meta">'+p.days+'</span><span class="chev"></span></summary><div class="dbody">'+
   p.ex.map(e=>'<div class="ex'+(e[2]?' hascue':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+e[1]+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+'</div>').join('')+
@@ -496,6 +566,15 @@ $('routines').innerHTML=ROUTINES.map(r=>'<details><summary>'+r.name+'<span class
 $('why').innerHTML=WHY.map(q=>'<div class="quote">'+q+'</div>').join('');
 $('patterns').innerHTML=PATTERNS.map(p=>'<div class="line">'+p+'</div>').join('');
 
+$('today-card').onclick=()=>{
+  const d=now.getDay(),mainName=MAINDAY[d];let h='';
+  if(mainName){const p=PROGRAM.find(x=>x.name===mainName);h+='<h2 style="margin-top:4px">Main · '+(mainName==='Raw day'?'Raw day':'Gym '+mainName)+'</h2><div class="card">'+p.ex.filter(e=>!(d!==0&&/Sun only/.test(e[0]))).map(e=>'<div class="ex'+(e[2]?' hascue':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+e[1]+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+'</div>').join('')+(p.note?'<div class="small muted" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">'+p.note+'</div>':'')+'</div>'}
+  const home=PROGRAM.find(x=>x.name==='Home').ex.filter(e=>HOMEDAYS[d].includes(e[0]));
+  h+='<h2>Home · evening</h2><div class="card">'+home.map(e=>'<div class="ex'+(e[2]?' hascue':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+e[1].replace(/ · (Mon|Tue|Wed|Thu|Fri|Sat|Sun)( \(light\))?(, (Mon|Tue|Wed|Thu|Fri|Sat|Sun)( \(light\))?)*/,'')+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+'</div>').join('')+'</div>';
+  $('day-sheet-title').textContent=DN[d]+' · '+w.main;$('day-sheet-body').innerHTML=h;
+  $('day-sheet-body').querySelectorAll('.ex.hascue').forEach(e=>e.onclick=()=>e.classList.toggle('open'));
+  $('day-sheet').classList.add('on');
+};
 /* ---------- handbook ---------- */
 let hbLoaded=false;
 $('open-hb').onclick=()=>{

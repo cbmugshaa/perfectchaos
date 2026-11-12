@@ -1,4 +1,4 @@
-const C='pc-v1';
+const C='pc-v2';
 const FILES=['./','index.html','manifest.json','icon-180.png','icon-192.png','icon-512.png',...Array.from({length:11},(_,i)=>'hb/p-'+String(i+1).padStart(2,'0')+'.jpg')];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(FILES)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))));self.clients.claim()});
