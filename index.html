@@ -135,6 +135,46 @@ summary .meta{color:var(--dim);font-weight:500;font-size:13px;margin-left:auto}
 .track .lt{font-size:15px;font-weight:600}
 .track .ls{font-size:13px;color:var(--dim)}
 .input{font:inherit;font-size:22px;font-weight:700;background:var(--card2);color:var(--text);border:0;border-radius:12px;padding:12px 14px;width:100%;margin-top:6px}
+/* pull-up counter */
+.pu-total{font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.pu-sets{display:flex;gap:6px;margin:12px 0 4px}
+.pu-sets i{flex:1;height:30px;border-radius:8px;background:#232326;display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:700;color:var(--faint);transition:all .25s}
+.pu-sets i.on{background:var(--blue);color:#fff;transform:scale(1.03)}
+.pu-btns{display:flex;gap:8px;margin-top:10px}
+.pu-btns button{flex:1;padding:13px;border-radius:12px;background:var(--card2);font-weight:700}
+.pu-btns button.primary{background:var(--blue);color:#fff;flex:2}
+.pu-btns button:disabled{opacity:.35}
+/* week strip */
+.week{display:flex;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.week span{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--faint);flex:1}
+.week b{width:10px;height:10px;border-radius:50%;background:#2a2a2d}
+.week .on b{background:var(--blue)}
+.week .today{color:var(--text)}
+.week .today b{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px #5a5a5f}
+/* cleared daily */
+#daily-card{transition:background .4s,box-shadow .4s}
+#daily-card.cleared{background:linear-gradient(160deg,#10223f,#0d1526);box-shadow:inset 0 0 0 1px rgba(61,139,253,.45)}
+#daily-card .cleared-msg{display:none;color:var(--blue);font-weight:800;font-size:14px;margin-top:10px}
+#daily-card.cleared .cleared-msg{display:block;animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+/* rest timer */
+.timer-row{display:flex;gap:8px;margin-bottom:18px}
+.timer-row button{flex:1;padding:12px;border-radius:12px;background:var(--card2);font-weight:700}
+.timer-pill{position:fixed;z-index:45;left:50%;bottom:calc(env(safe-area-inset-bottom) + 84px);transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;background:var(--blue);color:#fff;border-radius:99px;padding:11px 18px;font-weight:800;font-size:18px;font-variant-numeric:tabular-nums;display:flex;gap:14px;align-items:center;z-index:40;transition:all .25s;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.timer-pill.on{opacity:1;transform:translateX(-50%);pointer-events:auto}
+.timer-pill button{color:#fff;opacity:.8;font-size:15px;font-weight:700}
+.timer-pill.go{background:#fff;color:#000}
+.timer-pill.go button{color:#000}
+/* celebration */
+.cele{position:fixed;inset:0;z-index:60;display:grid;place-items:center;pointer-events:none;opacity:0;transition:opacity .2s}
+.cele.on{opacity:1}
+.cele .cbox{text-align:center;background:rgba(10,10,12,.92);border:1px solid rgba(61,139,253,.5);border-radius:22px;padding:22px 28px;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+.cele .ct1{font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--blue);text-transform:uppercase}
+.cele .ct2{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-top:4px}
+.cele .ct3{font-size:14px;color:var(--dim);margin-top:4px;font-weight:600}
+.cele i{position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:2px;background:var(--blue);animation:burst .9s ease-out forwards}
+.cele i:nth-child(odd){background:#fff}
+@keyframes burst{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(var(--r));opacity:0}}
 /* empty */
 .empty{text-align:center;padding:40px 20px;color:var(--dim)}
 .empty .big{color:var(--text);margin-bottom:6px}
@@ -180,12 +220,16 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
       <div class="big" id="day-main" style="margin-top:4px"></div>
       <div class="muted small" id="day-home" style="margin-top:6px"></div>
       <div class="small" style="color:var(--blue);font-weight:700;margin-top:10px">Open today's session ›</div>
+      <div class="week" id="week"></div>
     </button>
 
+    <div id="pu-wrap"></div>
+
     <h2>Daily</h2>
-    <div class="card">
+    <div class="card" id="daily-card">
       <div id="daily"></div>
       <div class="progress"><i id="daily-bar"></i></div>
+      <div class="cleared-msg">Day cleared ✓</div>
     </div>
 
     <h2>Benchmarks</h2>
@@ -312,6 +356,9 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
 
 </div>
 
+<div class="timer-pill" id="timer-pill"><span id="timer-txt">3:00</span><button id="timer-x">✕</button></div>
+<div class="cele" id="cele"></div>
+
 <!-- tab bar -->
 <nav class="tabbar" id="tabbar">
   <button data-v="physical"><svg viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg>Physical</button>
@@ -409,6 +456,17 @@ function checklist(el,items,store,onChange){
   });
   onChange&&onChange();
 }
+
+/* ---------- celebrate ---------- */
+let celeT;
+function celebrate(t1,t2,t3){
+  const c=$('cele');let parts='';
+  for(let i=0;i<26;i++){const a=Math.random()*Math.PI*2,d=110+Math.random()*120;parts+='<i style="--x:'+Math.cos(a)*d+'px;--y:'+Math.sin(a)*d+'px;--r:'+(Math.random()*540-270)+'deg"></i>'}
+  c.innerHTML=parts+'<div class="cbox"><div class="ct1">'+t1+'</div><div class="ct2">'+t2+'</div>'+(t3?'<div class="ct3">'+t3+'</div>':'')+'</div>';
+  c.classList.add('on');clearTimeout(celeT);celeT=setTimeout(()=>c.classList.remove('on'),2200);
+}
+function keyFor(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+S.hist=S.hist||{};
 
 /* ================= BUILD DATA ================= */
 const WEEK={
@@ -534,7 +592,52 @@ $('day-tag').textContent=w.tag;$('day-main').textContent=w.main;$('day-home').te
 checklist($('daily'),DAILY,S.daily,()=>{
   const n=DAILY.filter(d=>S.daily[d.t]).length;
   $('daily-bar').style.width=(n/DAILY.length*100)+'%';
+  const was=$('daily-card').classList.contains('cleared');
+  $('daily-card').classList.toggle('cleared',n===DAILY.length);
+  if(n===DAILY.length&&!was&&window._dailyReady)celebrate('Daily','Day cleared','All five done.');
+  const hk=keyFor(new Date());const had=!!S.hist[hk];S.hist[hk]=!!S.daily['Debrief'];if(had!==S.hist[hk]){save();window.renderWeek&&renderWeek()}
 });
+
+window._dailyReady=true;
+
+/* week strip */
+function renderWeek(){
+  const t=new Date();t.setHours(0,0,0,0);const off=(t.getDay()+6)%7;const mon=new Date(t);mon.setDate(t.getDate()-off);
+  $('week').innerHTML=['M','T','W','T','F','S','S'].map((l,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return '<span class="'+(S.hist[keyFor(d)]?'on ':'')+(i===off?'today':'')+'"><b></b>'+l+'</span>'}).join('');
+}
+window.renderWeek=renderWeek;renderWeek();
+
+/* easy pull-up counter (Mon, Thu, Fri) */
+S.pu=S.pu||{total:0,days:{}};
+const PU_DAYS=[1,4,5],MILES=[50,100,250,500,1000,2000,5000,10000];
+function renderPU(){
+  const w=$('pu-wrap');if(!PU_DAYS.includes(now.getDay())){w.innerHTML='';return}
+  const k=keyFor(new Date()),sets=S.pu.days[k]||[];const next=MILES.find(m=>m>S.pu.total)||'∞';
+  w.innerHTML='<h2>Easy pull-ups</h2><div class="card"><div class="row"><div><div class="label">All-time</div><div class="pu-total">'+S.pu.total.toLocaleString()+'</div></div><span class="pill grey">next: '+next.toLocaleString()+'</span></div>'+
+  '<div class="pu-sets">'+[0,1,2,3,4,5].map(i=>'<i class="'+(sets[i]?'on':'')+'">'+(sets[i]||(i<4?'':'+'))+'</i>').join('')+'</div>'+
+  '<div class="small muted">'+sets.length+' of 4–6 mini-sets · 2–3 crisp reps · never to failure</div>'+
+  '<div class="pu-btns"><button id="pu-undo"'+(sets.length?'':' disabled')+'>Undo</button><button id="pu-2"'+(sets.length>=6?' disabled':'')+'>+2</button><button class="primary" id="pu-3"'+(sets.length>=6?' disabled':'')+'>+3 reps</button></div></div>';
+  const add=r=>{const before=S.pu.total;sets.push(r);S.pu.days[k]=sets;S.pu.total+=r;save();renderPU();const m=MILES.find(m=>before<m&&S.pu.total>=m);if(m)celebrate('Milestone',m.toLocaleString()+' pull-ups','All-time easy reps.');else if(sets.length===4)celebrate('Easy pull-ups','Minimum hit','4 mini-sets. Two more if they stay crisp.')};
+  $('pu-2').onclick=()=>add(2);$('pu-3').onclick=()=>add(3);
+  $('pu-undo').onclick=()=>{const r=sets.pop();if(r){S.pu.total-=r;S.pu.days[k]=sets;save();renderPU()}};
+}
+renderPU();
+
+/* rest timer */
+let AC=null,tEnd=0,tInt=null;
+function chime(){try{if(!AC)return;[0,.22,.44].forEach((d,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=i===2?1320:880;g.gain.setValueAtTime(.0001,AC.currentTime+d);g.gain.exponentialRampToValueAtTime(.35,AC.currentTime+d+.02);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d+.2);o.connect(g).connect(AC.destination);o.start(AC.currentTime+d);o.stop(AC.currentTime+d+.22)})}catch(e){}}
+function tick(){
+  const left=Math.max(0,Math.round((tEnd-Date.now())/1000));const pill=$('timer-pill');
+  if(left>0){$('timer-txt').textContent='Rest '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0');pill.classList.remove('go');return}
+  clearInterval(tInt);tInt=null;chime();pill.classList.add('go');$('timer-txt').textContent='Go. Next set.';setTimeout(()=>{if(!tInt)pill.classList.remove('on','go')},4000);
+}
+function startRest(sec){
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}
+  tEnd=Date.now()+sec*1000;$('timer-pill').classList.add('on');clearInterval(tInt);tInt=setInterval(tick,250);tick();
+}
+$('timer-x').onclick=()=>{clearInterval(tInt);tInt=null;$('timer-pill').classList.remove('on','go')};
+document.addEventListener('visibilitychange',()=>{if(tInt)tick()});
+window.startRest=startRest;
 
 S.bench=S.bench||{};
 function bv(i){const o=S.bench[BENCH[i].k]||{};return {now:o.now!=null?o.now:BENCH[i].now,target:o.target!=null?o.target:BENCH[i].target}}
@@ -543,7 +646,16 @@ function renderBench(){
   $('bench').querySelectorAll('.tile').forEach(t=>t.onclick=()=>{const i=+t.dataset.i,v=bv(i);S.bmEdit=i;$('bm-title').textContent=BENCH[i].k;$('bm-now').value=v.now;$('bm-target').value=v.target;$('bm-sheet').classList.add('on')});
 }
 renderBench();
-$('bm-save').onclick=()=>{const i=S.bmEdit;S.bench[BENCH[i].k]={now:$('bm-now').value.trim(),target:$('bm-target').value.trim()};save();renderBench();$('bm-sheet').classList.remove('on')};
+S.benchStart=S.benchStart||{};
+const nums=t=>(String(t).match(/\d+(\.\d+)?/g)||[]).map(Number);
+function better(a,b){const x=nums(a),y=nums(b);if(!y.length)return false;if(!x.length)return false;for(let i=0;i<Math.max(x.length,y.length);i++){if((y[i]||0)>(x[i]||0))return true;if((y[i]||0)<(x[i]||0))return false}return false}
+$('bm-save').onclick=()=>{
+  const i=S.bmEdit,k=BENCH[i].k,old=bv(i).now,nw=$('bm-now').value.trim();
+  if(!S.benchStart[k]&&(old||nw))S.benchStart[k]=old||nw;
+  S.bench[k]={now:nw,target:$('bm-target').value.trim()};save();renderBench();$('bm-sheet').classList.remove('on');
+  if(old&&better(old,nw)){const d=(nums(nw)[0]||0)-(nums(S.benchStart[k])[0]||0);const unit=/Pull|Dips/.test(k)?' reps':'kg';
+    setTimeout(()=>celebrate('New PR',k+' · '+nw,d>0?'+'+(Math.round(d*10)/10)+unit+' since you started':'Up from '+old),250)}
+};
 
 /* skills */
 S.skills=S.skills||{};
@@ -555,7 +667,7 @@ function renderSkills(){
     (x.parked?'':'<div class="dbody">'+x.lv.map((l,j)=>'<button class="lv '+(j<c?'done':j===c?'cur':'')+'" data-s="'+si+'" data-j="'+j+'"><span class="ln">'+(j<c?'✓':j+1)+'</span><span><div class="lt">'+l[0]+'</div>'+(l[1]?'<div class="ls">'+l[1]+'</div>':'')+'</span></button>').join('')+
     (c<x.lv.length-1?'<button class="btn primary" data-up="'+si+'">Hit it · level up</button>':'<div class="small" style="color:var(--blue);font-weight:700;margin-top:10px">Top level. Own it.</div>')+
     (x.note?'<div class="small muted" style="margin-top:10px">'+x.note+'</div>':'')+'</div>')+'</details>'}).join('');
-  $('skills').querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{const x=SKILLS[b.dataset.up];S.skills[x.k]=Math.min((S.skills[x.k]||0)+1,x.lv.length-1);S.openSkill=x.k;save();renderSkills()});
+  $('skills').querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{const x=SKILLS[b.dataset.up];const n=Math.min((S.skills[x.k]||0)+1,x.lv.length-1);S.skills[x.k]=n;S.openSkill=x.k;save();renderSkills();celebrate('Level up',x.k+' · Level '+(n+1),x.lv[n][0])});
   $('skills').querySelectorAll('.lv').forEach(b=>b.onclick=()=>{const x=SKILLS[b.dataset.s],j=+b.dataset.j;if(j<(S.skills[x.k]||0)){S.skills[x.k]=j;S.openSkill=x.k;save();renderSkills()}});
   if(S.openSkill){const i=SKILLS.findIndex(x=>x.k===S.openSkill);const d=$('skills').querySelectorAll('details')[i];if(d)d.open=true}
 }
@@ -573,6 +685,7 @@ $('why').innerHTML=WHY.map(q=>'<div class="quote">'+q+'</div>').join('');
 
 $('today-card').onclick=()=>{
   const d=now.getDay(),mainName=MAINDAY[d];let h='';
+  h+='<div class="timer-row"><button onclick="startRest(60)">Rest 1:00</button><button onclick="startRest(120)">2:00</button><button onclick="startRest(180)">3:00</button></div>';
   if(mainName){const p=PROGRAM.find(x=>x.name===mainName);h+='<h2 style="margin-top:4px">Main · '+(mainName==='Raw day'?'Raw day':'Gym '+mainName)+'</h2><div class="card">'+p.ex.filter(e=>!(d!==0&&/Sun only/.test(e[0]))).map(e=>'<div class="ex'+(e[2]?' hascue':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+e[1]+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+'</div>').join('')+(p.note?'<div class="small muted" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">'+p.note+'</div>':'')+'</div>'}
   const home=PROGRAM.find(x=>x.name==='Home').ex.filter(e=>HOMEDAYS[d].includes(e[0]));
   h+='<h2>Home · evening</h2><div class="card">'+home.map(e=>'<div class="ex'+(e[2]?' hascue':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+e[1].replace(/ · (Mon|Tue|Wed|Thu|Fri|Sat|Sun)( \(light\))?(, (Mon|Tue|Wed|Thu|Fri|Sat|Sun)( \(light\))?)*/,'')+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+'</div>').join('')+'</div>';
