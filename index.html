@@ -193,6 +193,7 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
 
     <h2>The five rules</h2>
     <div class="card"><ol class="steps" id="rules"></ol></div>
+    <details><summary>Reminders<span class="chev"></span></summary><div class="dbody" id="reminders"></div></details>
 
     <h2>Program</h2>
     <div id="program"></div>
@@ -413,10 +414,10 @@ function checklist(el,items,store,onChange){
 const WEEK={
   1:{main:'Gym · Legs',tag:'Legs',home:'Hard pull-ups · curls + hammers · forearms · laterals · easy pull-ups'},
   2:{main:'Gym · Push A',tag:'Push',home:'Ab wheel · push-up plus · light legs (box pistols, calves)'},
-  3:{main:'Gym · Pull A',tag:'Pull',home:'Dips · scapular depressions'},
+  3:{main:'Gym · Pull A',tag:'Pull',home:'Dips · skull crushers · scapular depressions'},
   4:{main:'Home day',tag:'Home',home:'Hard pull-ups · curls + hammers · forearms · laterals · ab wheel · full home legs · easy pull-ups'},
   5:{main:'Gym · Push B',tag:'Push',home:'Easy pull-ups only. Rest before raw day.'},
-  6:{main:'Raw day',tag:'Raw',home:'Max intent, full rest, no conditioning. Then dips · scap depressions · laterals · ab wheel · push-up plus'},
+  6:{main:'Raw day',tag:'Raw',home:'Max intent, full rest, no conditioning. Then dips · skull crushers · scap depressions · laterals · ab wheel · push-up plus'},
   0:{main:'Gym · Pull B',tag:'Pull',home:'Dips · scapular depressions · weekly review'}
 };
 const DAILY=[
@@ -429,7 +430,7 @@ const DAILY=[
 const BENCH=[
   {k:'Bodyweight',now:'70.0kg',target:'73–75kg',wide:1},
   {k:'Press',now:'25 × 7',target:'30 × 8'},
-  {k:'Squat',now:'',target:'140–145kg'},
+  {k:'Squat',now:'',target:'140–145kg at neutral depth'},
   {k:'Pull-ups',now:'5',target:'10'},
   {k:'Dips',now:'',target:'15'}
 ];
@@ -450,8 +451,9 @@ const RULES=[
 ];
 const CUE={
   press:'Blades back and down first. Elbows 45–60° from the torso. DBs finish over the shoulders. Stop the set if the left shrugs or rolls forward.',
-  lat:'Arm 20–30° forward of the body. Lead with the elbow. Stop at shoulder height. Shoulders down. 2–3s lowering.',
-  tri:'Elbows fixed. Shoulders down, ribs down, breathe out on the push.'
+  lat:'Light (6–7kg), 12–20 reps. If traps hike or you swing, it\'s too heavy. Arm 20–30° forward of the body. Lead with the elbow. Stop at shoulder height. Shoulders down. 2–3s lowering.',
+  tri:'Elbows fixed. Wrist locked straight, push through the pinky side. Shoulders down, breathe out on the push.',
+  oh:'Elbows up and slightly forward, about shoulder width. Don\'t force them behind the head. Only the elbow moves. Lower deep for the stretch (back of the arm, not the shoulder). Ribs down. 10–15 reps, not max load.'
 };
 const PROGRAM=[
   {name:'Push',days:'Tue · Fri',ex:[
@@ -461,8 +463,8 @@ const PROGRAM=[
     ['Plate-loaded shoulder press','2 × 5–8 · RIR 1, last TF · 2 min','Handles start at shoulder height. Elbows slightly in front of the body. Shoulders down.'],
     ['Pec deck','2 × 10–15 · last to failure · 90s','Full stretch, squeeze, blades down.'],
     ['Cable lateral raise, left first','3 × 12–20 · last to failure · superset',CUE.lat],
-    ['Cuffed single-arm pushdown, left first','2–3 × 10–15 · last to failure · 60–90s',CUE.tri],
-    ['High-cable overhead extension','2 × 10–15 · form first · 60–90s',CUE.tri+' Lean forward 30–45°.']
+    ['Cuffed single-arm pushdown, left first','3 × 8–15 · main triceps lift · last to failure · 60–90s · ~10 reps to failure',CUE.tri],
+    ['High-cable overhead extension (or standing skull crusher)','1–2 × 10–15 · form first · 60–90s',CUE.oh+' Cable: lean forward 30–45°.']
   ]},
   {name:'Pull',days:'Wed · Sun',ex:[
     ['Priming','Bear breathing · scapular pull-ups · serratus · 5 min'],
@@ -484,7 +486,8 @@ const PROGRAM=[
   {name:'Home',days:'Evenings',ex:[
     ['Easy pull-ups','4–6 mini-sets of 2–3 crisp reps · Mon, Thu, Fri · never to failure'],
     ['Hard pull-ups','3 @ RIR 1 · Mon, Thu'],
-    ['Dips','2–3 sets · Wed, Sat, Sun','Torso upright, elbows straight back, shoulders down. Start at 90° elbow depth.'],
+    ['Dips','2 sets · Wed, Sat, Sun','Torso upright, elbows straight back, shoulders down. Start at 90° elbow depth.'],
+    ['Standing DB skull crusher','2 × 10–15 · one DB, both hands · Wed, Sat',CUE.oh],
     ['Scapular depression on dip bars','2–3 × 8–12 · 1s hold · Wed, Sat, Sun'],
     ['Push-up plus, hard','2–3 × 8–12 · Tue, Sat'],
     ['DB lateral raise, light','3 × 15–20 · Mon, Thu, Sat',CUE.lat],
@@ -510,14 +513,15 @@ const ROUTINES=[
   {name:'Morning',steps:['Wake at the fixed time','Water','Sun walk','90/90 breathing','Breakfast with protein + creatine']},
   {name:'Night',steps:['Phone away, dim lights','Snack if hungry','In bed: sighs, or in 4 / out 6–8','Lights out 8h before wake']},
   {name:'Priming',steps:['Bear breathing × 5','Serratus wall push','Serratus punch, left first','Scapular pull-ups','Push-up plus (push days)']},
-  {name:'Ramp sets',steps:['Light × 8–10','60–70% × 4–5','85–90% × 2–3','Working sets']},
+  {name:'Ramp sets',steps:['~60% × 6–8','~90% × 2–3 only','Working sets','e.g. flat DB: 15kg × 6–8 → 22.5kg × 2–3 → 25kg','Heavy legs or cold mornings: add a light × 8–10 first']},
+  {name:'Box squat depth',steps:['Film a side-on bodyweight squat','Find where the tailbone starts to tuck','Final box sits 2–3cm above that','Lower the box 2–3cm whenever all sets hit 6']},
   {name:'360 breath',steps:['In through the nose ~4s, ribs widen sideways and into the back','Out through the mouth ~6s until the ribs drop']},
   {name:'Shake',steps:['500ml milk','40g oats','2 tbsp peanut butter','1 banana + honey']}
 ];
 const WHY=['“I want to get <span>strong as fuck</span>.”','“Strong, muscular, and <span>explosive</span>.”','“I don\'t want to just be toned. I want to get <span>big</span> too.”','“I have <span>no excuses</span> to not be the most consistent.”'];
 const PATTERNS=['Skipping legs','Going on and off with the gym','Waiting 4+ hours to eat','Late nights on the phone','Left shoulder hiking','Standing staggered, left leg back','Underloading out of caution (the “humble gimmick”)','Random easy reps instead of hard sets','Chasing feel or new exercise trends','Too many goals at once','Not logging numbers'];
 
-const HOMEDAYS={1:['Hard pull-ups','DB curl + hammer curl','Wrist curl + reverse curl','DB lateral raise, light','Easy pull-ups'],2:['Ab wheel, kneeling, full range','Push-up plus, hard','Box pistol, left first','Single-leg calf raise, weighted'],3:['Dips','Scapular depression on dip bars'],4:['Hard pull-ups','DB curl + hammer curl','Wrist curl + reverse curl','DB lateral raise, light','Ab wheel, kneeling, full range','Box pistol, left first','Supported split squat, left first','Cossack squat','Single-leg calf raise, weighted','Easy pull-ups'],5:['Easy pull-ups'],6:['Dips','Scapular depression on dip bars','DB lateral raise, light','Ab wheel, kneeling, full range','Push-up plus, hard'],0:['Dips','Scapular depression on dip bars']};
+const HOMEDAYS={1:['Hard pull-ups','DB curl + hammer curl','Wrist curl + reverse curl','DB lateral raise, light','Easy pull-ups'],2:['Ab wheel, kneeling, full range','Push-up plus, hard','Box pistol, left first','Single-leg calf raise, weighted'],3:['Dips','Standing DB skull crusher','Scapular depression on dip bars'],4:['Hard pull-ups','DB curl + hammer curl','Wrist curl + reverse curl','DB lateral raise, light','Ab wheel, kneeling, full range','Box pistol, left first','Supported split squat, left first','Cossack squat','Single-leg calf raise, weighted','Easy pull-ups'],5:['Easy pull-ups'],6:['Dips','Standing DB skull crusher','Scapular depression on dip bars','DB lateral raise, light','Ab wheel, kneeling, full range','Push-up plus, hard'],0:['Dips','Scapular depression on dip bars']};
 const MAINDAY={1:'Legs',2:'Push',3:'Pull',5:'Push',6:'Raw day',0:'Pull'};
 /* ---------- render build ---------- */
 const now=new Date();
@@ -557,6 +561,8 @@ function renderSkills(){
 }
 renderSkills();
 $('rules').innerHTML=RULES.map(r=>'<li>'+r+'</li>').join('');
+const REMINDERS=['Warm-up sets near working weight: 2–3 reps only. Never 8.','Full 2–3 min rest between heavy sets.','No testing a heavier weight before working sets. It costs reps on the real ones.','Track total reps across all sets. That\'s your progress every session.','Left foot forward, not back. Left foot forward switches the left glute on.','Lateral raises light: 6–7kg, 12–20 reps. Traps hike or swing = too heavy.','Calves standing, not seated. The gastrocnemius only works fully with a straight knee.','Triceps cap: ~20 hard sets a week.'];
+$('reminders').innerHTML=REMINDERS.map(x=>'<div class="line">'+x+'</div>').join('');
 $('program').innerHTML=PROGRAM.map(p=>'<details><summary>'+p.name+'<span class="meta">'+p.days+'</span><span class="chev"></span></summary><div class="dbody">'+
   p.ex.map(e=>'<div class="ex'+(e[2]?' hascue':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+e[1]+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+'</div>').join('')+
   (p.note?'<div class="small muted" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">'+p.note+'</div>':'')+'</div></details>').join('');
