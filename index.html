@@ -20,7 +20,11 @@
   --r:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:var(--bg);color:var(--text)}
+html,body{background:var(--bg);color:var(--text);touch-action:manipulation;-webkit-text-size-adjust:100%}
+*{touch-action:manipulation}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,select{-webkit-user-select:text;user-select:text}
+.hb,.hb *{touch-action:pan-x pan-y pinch-zoom}
 body{font-family:"Archivo",-apple-system,BlinkMacSystemFont,sans-serif;font-weight:500;font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .app{max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 96px)}
@@ -774,6 +778,9 @@ $('log-sess').onclick=()=>{const t=$('sess-topic').value;S.topics[t]=(S.topics[t
 /* ---------- init ---------- */
 showSub(S.sub||'build');
 showView(S.view||'physical');
+/* no zoom outside the handbook */
+['gesturestart','gesturechange'].forEach(ev=>document.addEventListener(ev,e=>{if(!e.target.closest||!e.target.closest('.hb'))e.preventDefault()},{passive:false}));
+let lastTouch=0;document.addEventListener('touchend',e=>{const t=Date.now();if(t-lastTouch<300&&!(e.target.closest&&e.target.closest('.hb,input,select'))){e.preventDefault();e.target.click&&e.target.click()}lastTouch=t},{passive:false});
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script>
 </body>
