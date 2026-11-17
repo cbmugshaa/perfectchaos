@@ -495,7 +495,7 @@ const DAILY=[
   {t:'Sunlight',s:'15–20 min walk'},
   {t:'Water',s:'400–500ml on waking'},
   {t:'Creatine',s:'6g with breakfast'},
-  {t:'Mobility',s:'90/90 + release work'},
+  {t:'Mobility',s:'nightly · ~8 min · before breathing in bed'},
   {t:'Debrief',s:'log today\'s session'}
 ];
 const BENCH=[
@@ -588,9 +588,16 @@ const PROGRAM=[
 ];
 const ROUTINES=[
   {name:'Morning',steps:['Wake at the fixed time','Water','Sun walk','90/90 breathing','Breakfast with protein + creatine']},
-  {name:'Night',steps:['Phone away, dim lights','Snack if hungry','In bed: sighs, or in 4 / out 6–8','Lights out 8h before wake']},
+  {name:'Night',steps:['Phone away, dim lights','Snack if hungry','Nightly mobility, ~8 min','In bed: sighs, or in 4 / out 6–8','Lights out 8h before wake']},
   {name:'Priming',steps:['Bear breathing × 5','Serratus wall push','Serratus punch, left first','Scapular pull-ups','Push-up plus (push days)']},
   {name:'Ramp sets',steps:['~60% × 6–8','~90% × 2–3 only','Working sets','e.g. flat DB: 15kg × 6–8 → 22.5kg × 2–3 → 25kg','Heavy legs or cold mornings: add a light × 8–10 first']},
+  {name:'Nightly mobility · ~8 min',steps:[
+    '<b>90/90 hip switches</b><div class="small muted">8 slow switches, no hands, sit tall. Press knees down 5s each side.</div>',
+    '<b>Half-kneeling hip flexor stretch</b><div class="small muted">45s each side, left first. Tuck the pelvis, squeeze the back-leg glute, ribs down, shift forward slightly.</div>',
+    '<b>Deep squat hold</b><div class="small muted">60s. Feet straight and narrow, heels down, inner ankles high. Shift side to side.</div>',
+    '<b>Thoracic rotation on all fours</b><div class="small muted">6–8 each side, left first. Push the floor away, reach one arm low under the body, then rotate the upper back and reach to the sky. Hips and lower back stay still.</div>',
+    '<span class="small muted">Control at end range, not more range. Breathe 360. Strong stretch, never pain.</span>'
+  ]},
   {name:'Box squat depth',steps:['Film a side-on bodyweight squat','Find where the tailbone starts to tuck','Final box sits 2–3cm above that','Lower the box 2–3cm whenever all sets hit 6']},
   {name:'360 breath',steps:['In through the nose ~4s, ribs widen sideways and into the back','Out through the mouth ~6s until the ribs drop']},
   {name:'Shake',steps:['500ml milk','40g oats','2 tbsp peanut butter','1 banana + honey']}
@@ -692,7 +699,7 @@ function renderSkills(){
 }
 renderSkills();
 $('rules').innerHTML=RULES.map(r=>'<li>'+r+'</li>').join('');
-const REMINDERS=['Ramp up jumping. Never go straight into max-effort jumps after time off.','Legs are strength-biased: heavy, low reps.','Broken week: Mon Legs A, Wed push, Fri pull, Sat raw. Legs B goes first.','Warm-up sets near working weight: 2–3 reps only. Never 8.','Full 2–3 min rest between heavy sets.','No testing a heavier weight before working sets. It costs reps on the real ones.','Track total reps across all sets. That\'s your progress every session.','Left foot forward, not back. Left foot forward switches the left glute on.','Lateral raises light: 6–7kg, 12–20 reps. Traps hike or swing = too heavy.','Calves standing, not seated. The gastrocnemius only works fully with a straight knee.','Triceps cap: ~20 hard sets a week.'];
+const REMINDERS=['Already flexible: the goal is control at end range, not more stretch.','No long static stretch holds right before training or jumping.','Thoracic rotation: the upper back takes the twist so the lower back doesn\'t.','Ramp up jumping. Never go straight into max-effort jumps after time off.','Legs are strength-biased: heavy, low reps.','Broken week: Mon Legs A, Wed push, Fri pull, Sat raw. Legs B goes first.','Warm-up sets near working weight: 2–3 reps only. Never 8.','Full 2–3 min rest between heavy sets.','No testing a heavier weight before working sets. It costs reps on the real ones.','Track total reps across all sets. That\'s your progress every session.','Left foot forward, not back. Left foot forward switches the left glute on.','Lateral raises light: 6–7kg, 12–20 reps. Traps hike or swing = too heavy.','Calves standing, not seated. The gastrocnemius only works fully with a straight knee.','Triceps cap: ~20 hard sets a week.'];
 $('reminders').innerHTML=REMINDERS.map(x=>'<div class="line">'+x+'</div>').join('');
 $('program').innerHTML=PROGRAM.map(p=>'<details><summary>'+p.name+'<span class="meta">'+p.days+'</span><span class="chev"></span></summary><div class="dbody">'+
   p.ex.map(e=>'<div class="ex'+(e[2]?' hascue':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+e[1]+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+'</div>').join('')+
