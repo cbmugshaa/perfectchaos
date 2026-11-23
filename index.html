@@ -212,6 +212,27 @@ summary .meta{color:var(--dim);font-weight:500;font-size:13px;margin-left:auto}
 .cdots{display:flex;justify-content:center;gap:6px;margin-top:10px}
 .cdots i{width:6px;height:6px;border-radius:50%;background:#3a3a3c;transition:all .2s}
 .cdots i.on{background:var(--blue);width:16px;border-radius:4px}
+/* number to beat */
+.ex{cursor:pointer}
+.ex.hasx .n::after{content:" ›";color:var(--faint)}
+.ex .logp{display:none;margin-top:10px;background:var(--card2);border-radius:12px;padding:12px;cursor:default}
+.ex.open .logp{display:block}
+.ex.open .cue{display:block}
+.logp .ntb{font-size:15px;font-weight:700}
+.logp .ntt{font-size:14px;font-weight:800;color:var(--blue);margin-top:2px}
+.logp .lrow{display:flex;gap:8px;margin-top:10px}
+.logp input{font:inherit;font-size:16px;font-weight:600;background:#0f0f11;color:var(--text);border:0;border-radius:10px;padding:10px 11px;min-width:0;width:100%}
+.logp .lrow input:first-child{flex:0 0 30%}
+.logp .lnote{margin-top:8px}
+.logp button.save{margin-top:8px;width:100%;padding:11px;border-radius:10px;background:var(--blue);color:#fff;font-weight:700}
+/* win the week */
+.win{display:flex;align-items:center;gap:14px}
+.win .wn{font-size:34px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+.win .wn small{font-size:15px;color:var(--dim);font-weight:600}
+.win-pill{font-size:13px;font-weight:800;letter-spacing:.06em;padding:5px 11px;border-radius:99px;background:#232326;color:var(--dim)}
+.win-pill.on{background:var(--blue);color:#fff}
+.warn{margin-top:10px;font-size:14px;font-weight:700;color:#fff;background:rgba(61,139,253,.14);border-radius:10px;padding:9px 11px}
+#ritual-card.cleared{box-shadow:inset 0 0 0 1px rgba(61,139,253,.45)}
 /* empty */
 .empty{text-align:center;padding:40px 20px;color:var(--dim)}
 .empty .big{color:var(--text);margin-bottom:6px}
@@ -243,6 +264,12 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
 <section class="view" id="v-physical">
   <div class="eyebrow" id="today-date"></div>
   <h1>Physical</h1>
+  <div class="card" id="win-card" style="margin-bottom:14px">
+    <div class="row"><span class="label">Win the week</span><span class="win-pill" id="win-pill">IN PROGRESS</span></div>
+    <div class="win" style="margin-top:6px"><div class="wn" id="win-n"></div><div class="small muted" id="win-sub" style="flex:1"></div></div>
+    <div class="progress"><i id="win-bar"></i></div>
+    <div class="warn" id="win-warn" style="display:none">Never miss twice in a row.</div>
+  </div>
   <div class="seg" id="seg-phys">
     <button data-sub="build">Build</button>
     <button data-sub="skill">Skill</button>
@@ -253,6 +280,11 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
 
   <!-- BUILD -->
   <div class="sub" id="s-build">
+    <details class="card" id="ritual-card" open style="padding:0">
+      <summary>Pre-session ritual<span class="meta" id="ritual-meta"></span><span class="chev"></span></summary>
+      <div class="dbody"><div id="ritual"></div></div>
+    </details>
+
     <button class="card hero" id="today-card" style="width:100%;text-align:left;display:block">
       <div class="row"><span class="label" id="day-name"></span><span class="pill" id="day-tag"></span></div>
       <div class="big" id="day-main" style="margin-top:4px"></div>
@@ -277,6 +309,9 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
 
     <h2>Benchmarks</h2>
     <div class="tiles" id="bench"></div>
+
+    <h2>Intensity</h2>
+    <div class="card" id="intensity"></div>
 
     <h2>The five rules</h2>
     <div class="card"><ol class="steps" id="rules"></ol></div>
@@ -615,7 +650,7 @@ function celebrate(t1,t2,t3){
   c.classList.add('on');clearTimeout(celeT);celeT=setTimeout(()=>c.classList.remove('on'),2200);
 }
 function keyFor(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
-S.hist=S.hist||{};
+S.hist=S.hist||{};S.logs=S.logs||{};
 
 /* ================= BUILD DATA ================= */
 const WEEK={
@@ -753,17 +788,44 @@ checklist($('daily'),DAILY,S.daily,()=>{
   const was=$('daily-card').classList.contains('cleared');
   $('daily-card').classList.toggle('cleared',n===DAILY.length);
   if(n===DAILY.length&&!was&&window._dailyReady)celebrate('Daily','Day cleared','All five done.');
-  const hk=keyFor(new Date());const had=!!S.hist[hk];S.hist[hk]=!!S.daily['Debrief'];if(had!==S.hist[hk]){save();window.renderWeek&&renderWeek()}
+  const hk=keyFor(new Date());const had=!!S.hist[hk];S.hist[hk]=!!S.daily['Debrief'];if(had!==S.hist[hk]){save();window.renderWeek&&renderWeek();window.renderWin&&renderWin()}
 });
 
 window._dailyReady=true;
 
+/* pre-session ritual */
+const RITUAL=[{t:'Headphones on',s:'"Lift" playlist'},{t:'Hoodie on',s:'priming + bear breathing'},{t:'Warm up until slightly sweaty'},{t:'Check today\'s number to beat'},{t:'10 power breaths',s:'quick sharp nasal inhales, relaxed exhales · stop if dizzy'},{t:'First ramp set',s:'~60% × 6–8, then ~90% × 2–3'}];
+if(!S.ritual||S.ritual.date!==keyFor(new Date()))S.ritual={date:keyFor(new Date()),t:{}};
+let ritualWasDone=RITUAL.every(r=>S.ritual.t[r.t]);
+checklist($('ritual'),RITUAL,S.ritual.t,()=>{const n=RITUAL.filter(r=>S.ritual.t[r.t]).length;$('ritual-meta').textContent=n+' / '+RITUAL.length;const done=n===RITUAL.length;$('ritual-card').classList.toggle('cleared',done);
+  if(done&&!ritualWasDone){celebrate('Ritual done','Go to work','Say the number before the set.');setTimeout(()=>{$('ritual-card').open=false},900)}ritualWasDone=done});
+if(ritualWasDone)$('ritual-card').open=false;
+
+const INTENSITY=['<b>Beat last session:</b> one more rep, cleaner reps, or further up on a failed rep.','<b>A set ends</b> when bar speed slows a lot or form breaks (left hikes, back arches), not when it burns.','<b>Say the target number</b> before the set. Last set: try one more. If it stalls, control it down.','<b>Cue words:</b> "drive", "explode", "shoulders down, push".','<b>5 seconds of imagery</b> before a top set or jump.','<b>Stay warm</b> between sets (hoodie in air-con). Re-warm after 10+ min sitting.','<b>Phone</b> on airplane mode, timer only.','<b>Playlists:</b> "Lift" for the whole session. "Top set" (5–10 tracks) for heaviest sets and raw-day jumps only.','<b>Don\'t wait to feel motivated.</b> Start the ritual anyway.'];
+$('intensity').innerHTML=INTENSITY.map(x=>'<div class="line">'+x+'</div>').join('');
+
 /* week strip */
+function sessionOn(k){if(S.hist[k])return true;const iso=(()=>{const [y,m,d]=k.split('-');return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')})();return Object.values(S.logs||{}).some(L=>L.some(x=>x.d===iso))}
+function weekDays(){const t=new Date();t.setHours(0,0,0,0);const off=(t.getDay()+6)%7;const mon=new Date(t);mon.setDate(t.getDate()-off);return [...Array(7)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d})}
+function renderWin(){
+  const days=weekDays(),t=new Date();t.setHours(0,0,0,0);
+  const n=days.filter(d=>d<=t&&sessionOn(keyFor(d))).length;
+  const mon=days[0],legsA=!!S.hist[keyFor(mon)]||PROGRAM.find(x=>x.name==='Legs A').ex.some(e=>(S.logs[e[0]]||[]).some(x=>new Date(x.d+'T00:00:00')>=mon));
+  const won=n>=4&&legsA;
+  $('win-n').innerHTML=n+'<small> / 4</small>';
+  $('win-sub').innerHTML='Gym sessions this week · Legs A '+(legsA?'<b style="color:var(--blue)">✓</b>':'not yet')+'<br>Plus daily basics: food, water, sleep';
+  $('win-bar').style.width=Math.min(100,n/4*100)+'%';
+  const pill=$('win-pill');pill.textContent=n>=7?'FULL WEEK':won?'WIN':'IN PROGRESS';pill.classList.toggle('on',won);
+  const y=new Date(t);y.setDate(t.getDate()-1);
+  $('win-warn').style.display=(!sessionOn(keyFor(y))&&!sessionOn(keyFor(t)))?'block':'none';
+  if(won&&S.winWeek!==keyFor(mon)&&window._dailyReady){S.winWeek=keyFor(mon);save();celebrate('Win the week',n+' sessions','Legs A done. Week won.')}
+}
+window.renderWin=renderWin;
 function renderWeek(){
   const t=new Date();t.setHours(0,0,0,0);const off=(t.getDay()+6)%7;const mon=new Date(t);mon.setDate(t.getDate()-off);
-  $('week').innerHTML=['M','T','W','T','F','S','S'].map((l,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return '<span class="'+(S.hist[keyFor(d)]?'on ':'')+(i===off?'today':'')+'"><b></b>'+l+'</span>'}).join('');
+  $('week').innerHTML=['M','T','W','T','F','S','S'].map((l,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return '<span class="'+(sessionOn(keyFor(d))?'on ':'')+(i===off?'today':'')+'"><b></b>'+l+'</span>'}).join('');
 }
-window.renderWeek=renderWeek;renderWeek();
+window.renderWeek=renderWeek;renderWeek();renderWin();
 
 /* easy pull-up counter (Mon, Thu, Fri) */
 S.pu=S.pu||{total:0,days:{}};
@@ -831,12 +893,47 @@ function renderSkills(){
 }
 renderSkills();
 $('rules').innerHTML=RULES.map(r=>'<li>'+r+'</li>').join('');
-const REMINDERS=['Already flexible: the goal is control at end range, not more stretch.','No long static stretch holds right before training or jumping.','Thoracic rotation: the upper back takes the twist so the lower back doesn\'t.','Ramp up jumping. Never go straight into max-effort jumps after time off.','Legs are strength-biased: heavy, low reps.','Broken week: Mon Legs A, Wed push, Fri pull, Sat raw. Legs B goes first.','Warm-up sets near working weight: 2–3 reps only. Never 8.','Full 2–3 min rest between heavy sets.','No testing a heavier weight before working sets. It costs reps on the real ones.','Track total reps across all sets. That\'s your progress every session.','Left foot forward, not back. Left foot forward switches the left glute on.','Lateral raises light: 6–7kg, 12–20 reps. Traps hike or swing = too heavy.','Calves standing, not seated. The gastrocnemius only works fully with a straight knee.','Triceps cap: ~20 hard sets a week.'];
+const REMINDERS=['Coming back after a break: first session at RIR 2–3, no technical failure. Full intensity next session. ~3 weeks off costs almost no muscle.','Sick-day neck check: symptoms above the neck only → light training OK if you feel up to it. Below the neck or fever → full rest. Sick is a reason, not laziness.','A bad Monday isn\'t a bad week. The week isn\'t lost until Sunday.','After one bad night: keep heavy familiar lifts, go easier on max sprints, jumps and new technique.','Already flexible: the goal is control at end range, not more stretch.','No long static stretch holds right before training or jumping.','Thoracic rotation: the upper back takes the twist so the lower back doesn\'t.','Ramp up jumping. Never go straight into max-effort jumps after time off.','Legs are strength-biased: heavy, low reps.','Broken week: Mon Legs A, Wed push, Fri pull, Sat raw. Legs B goes first.','Warm-up sets near working weight: 2–3 reps only. Never 8.','Full 2–3 min rest between heavy sets.','No testing a heavier weight before working sets. It costs reps on the real ones.','Track total reps across all sets. That\'s your progress every session.','Left foot forward, not back. Left foot forward switches the left glute on.','Lateral raises light: 6–7kg, 12–20 reps. Traps hike or swing = too heavy.','Calves standing, not seated. The gastrocnemius only works fully with a straight knee.','Triceps cap: ~20 hard sets a week.'];
 $('reminders').innerHTML=REMINDERS.map(x=>'<div class="line">'+x+'</div>').join('');
+/* ---------- number to beat ---------- */
+S.logs=S.logs||{};
+const isoToday=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const NOLOG=/^(Priming|Warm-up)/;
+const repsOf=t=>(String(t).match(/\d+/g)||[]).map(Number);
+const sum=a=>a.reduce((x,y)=>x+y,0);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function logLine(x){return (x.w?x.w+'kg × ':'')+x.reps.join(', ')+' · '+sum(x.reps)+' total'}
+function logPanel(name){
+  if(NOLOG.test(name))return '';
+  const L=(S.logs[name]||[]).slice().sort((a,b)=>a.d<b.d?-1:1),t=isoToday();
+  const today=L.find(x=>x.d===t),prev=L.filter(x=>x.d<t).pop();
+  let h='<div class="logp" data-ex="'+esc(name)+'">';
+  if(prev){h+='<div class="label">Number to beat · '+new Date(prev.d+'T00:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'})+'</div><div class="ntb">'+logLine(prev)+'</div><div class="ntt">Beat '+sum(prev.reps)+' total reps</div>'+(prev.note?'<div class="small muted" style="margin-top:2px">Note: '+esc(prev.note)+'</div>':'')}
+  else h+='<div class="label">Number to beat</div><div class="ntb" style="color:var(--dim)">No log yet. This session sets it.</div>';
+  if(today){const diff=prev?sum(today.reps)-sum(prev.reps):0;h+='<div class="small" style="margin-top:8px;font-weight:700">Today: '+logLine(today)+(prev?(diff>0?' <span style="color:var(--blue)">· beat by '+diff+'</span>':diff===0?' · matched':' · '+diff):'')+'</div>'+(today.note?'<div class="small muted">Note: '+esc(today.note)+'</div>':'')}
+  h+='<div class="lrow"><input class="lw" inputmode="decimal" placeholder="kg" value="'+(today?today.w||'':prev&&prev.w?prev.w:'')+'"><input class="lr" inputmode="text" placeholder="reps per set, e.g. 8, 7, 6" value="'+(today?today.reps.join(', '):'')+'"></div>'+
+     '<input class="lnote lnn" placeholder="Note (e.g. failed 7th halfway up)" value="'+(today&&today.note?esc(today.note):'')+'">'+
+     '<button class="save">'+(today?'Update today':'Log session')+'</button></div>';
+  return h;
+}
+function exHTML(e,dtext){const lp=logPanel(e[0]);return '<div class="ex'+(e[2]||lp?' hasx':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+(dtext||e[1])+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+lp+'</div>'}
+function wireEx(root){
+  root.querySelectorAll('.ex').forEach(ex=>{ex.onclick=ev=>{if(ev.target.closest('.logp'))return;ex.classList.toggle('open')}});
+  root.querySelectorAll('.logp .save').forEach(b=>b.onclick=()=>{
+    const p=b.closest('.logp'),name=p.dataset.ex.replace(/&amp;/g,'&').replace(/&quot;/g,'"');const reps=repsOf(p.querySelector('.lr').value);if(!reps.length)return;
+    const w=parseFloat(p.querySelector('.lw').value)||0,note=p.querySelector('.lnn').value.trim(),t=isoToday();
+    const L=(S.logs[name]||[]).filter(x=>x.d!==t);const prev=L.slice().sort((a,b)=>a.d<b.d?-1:1).filter(x=>x.d<t).pop();
+    L.push({d:t,w,reps,note});S.logs[name]=L;save();
+    const ex=p.closest('.ex');const tmp=document.createElement('div');tmp.innerHTML=logPanel(name);p.replaceWith(tmp.firstChild);wireEx(ex.parentNode);ex.classList.add('open');
+    renderWin();renderWeek();
+    if(prev&&sum(reps)>sum(prev.reps))celebrate('Beat it',name.split(',')[0],sum(reps)+' total · +'+(sum(reps)-sum(prev.reps))+' reps');
+  });
+}
+
 $('program').innerHTML=PROGRAM.map(p=>'<details><summary>'+p.name+'<span class="meta">'+p.days+'</span><span class="chev"></span></summary><div class="dbody">'+
-  p.ex.map(e=>'<div class="ex'+(e[2]?' hascue':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+e[1]+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+'</div>').join('')+
+  p.ex.map(e=>exHTML(e)).join('')+
   (p.note?'<div class="small muted" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">'+p.note+'</div>':'')+'</div></details>').join('');
-document.querySelectorAll('.ex.hascue').forEach(e=>e.onclick=()=>e.classList.toggle('open'));
+wireEx($('program'));
 $('routines').innerHTML=ROUTINES.map(r=>'<details><summary>'+r.name+'<span class="chev"></span></summary><div class="dbody"><ol class="steps">'+r.steps.map(s=>'<li>'+s+'</li>').join('')+'</ol></div></details>').join('');
 $('why').innerHTML=WHY.map(q=>'<div class="quote">'+q+'</div>').join('');
 
@@ -844,11 +941,11 @@ $('why').innerHTML=WHY.map(q=>'<div class="quote">'+q+'</div>').join('');
 $('today-card').onclick=()=>{
   const d=now.getDay(),mainName=MAINDAY[d];let h='';
   h+='<div class="timer-row"><button onclick="startRest(60)">Rest 1:00</button><button onclick="startRest(120)">2:00</button><button onclick="startRest(180)">3:00</button></div>';
-  if(mainName){const p=PROGRAM.find(x=>x.name===mainName);h+='<h2 style="margin-top:4px">Main · '+(mainName==='Raw day'?'Raw day':'Gym '+mainName)+'</h2><div class="card">'+p.ex.filter(e=>!(d!==0&&/Sun only/.test(e[0]))).map(e=>'<div class="ex'+(e[2]?' hascue':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+e[1]+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+'</div>').join('')+(p.note?'<div class="small muted" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">'+p.note+'</div>':'')+'</div>'}
+  if(mainName){const p=PROGRAM.find(x=>x.name===mainName);h+='<h2 style="margin-top:4px">Main · '+(mainName==='Raw day'?'Raw day':'Gym '+mainName)+'</h2><div class="card">'+p.ex.filter(e=>!(d!==0&&/Sun only/.test(e[0]))).map(e=>exHTML(e)).join('')+(p.note?'<div class="small muted" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">'+p.note+'</div>':'')+'</div>'}
   const home=PROGRAM.find(x=>x.name==='Home').ex.filter(e=>HOMEDAYS[d].includes(e[0]));
-  h+='<h2>Home · evening</h2><div class="card">'+home.map(e=>'<div class="ex'+(e[2]?' hascue':'')+'"><div class="n">'+e[0]+'</div><div class="d">'+e[1].replace(/ · (Mon|Tue|Wed|Thu|Fri|Sat|Sun)( \(light\))?(, (Mon|Tue|Wed|Thu|Fri|Sat|Sun)( \(light\))?)*/,'')+'</div>'+(e[2]?'<div class="cue">'+e[2]+'</div>':'')+'</div>').join('')+'</div>';
+  h+='<h2>Home · evening</h2><div class="card">'+home.map(e=>exHTML(e,e[1].replace(/ · (Mon|Tue|Wed|Thu|Fri|Sat|Sun)( \(light\))?(, (Mon|Tue|Wed|Thu|Fri|Sat|Sun)( \(light\))?)*/,''))).join('')+'</div>';
   $('day-sheet-title').textContent=DN[d]+' · '+w.main;$('day-sheet-body').innerHTML=h;
-  $('day-sheet-body').querySelectorAll('.ex.hascue').forEach(e=>e.onclick=()=>e.classList.toggle('open'));
+  wireEx($('day-sheet-body'));
   $('day-sheet').classList.add('on');
 };
 /* ================= NUTRITION ================= */
