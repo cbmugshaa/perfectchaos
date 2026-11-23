@@ -38,7 +38,7 @@ h2{font-size:13px;font-weight:700;color:var(--dim);letter-spacing:.06em;text-tra
 
 /* segmented */
 .seg{display:flex;background:var(--card2);border-radius:10px;padding:2px;margin-bottom:18px}
-.seg button{flex:1;padding:7px 0;border-radius:8px;font-size:13px;font-weight:600;color:var(--dim);transition:all .2s}
+.seg button{flex:1;padding:7px 0;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--dim);transition:all .2s}
 .seg button.on{background:#3a3a3c;color:var(--text)}
 .sub{display:none}.sub.on{display:block;animation:fade .25s ease}
 
@@ -179,6 +179,32 @@ summary .meta{color:var(--dim);font-weight:500;font-size:13px;margin-left:auto}
 .cele i{position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:2px;background:var(--blue);animation:burst .9s ease-out forwards}
 .cele i:nth-child(odd){background:#fff}
 @keyframes burst{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(var(--r));opacity:0}}
+/* nutrition */
+.nbtns{display:flex;gap:8px;margin-top:10px}
+.nbtns button{flex:1;padding:12px 6px;border-radius:12px;background:var(--card2);font-weight:700;font-size:14px}
+.nbtns button.primary{background:var(--blue);color:#fff}
+.nbtns button:disabled{opacity:.35}
+.nstat{font-size:30px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.nstat small{font-size:15px;color:var(--dim);font-weight:600;letter-spacing:0}
+.nsec{padding:14px 0;border-top:1px solid var(--line)}
+.nsec:first-child{border-top:0;padding-top:0}
+.wtimes{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.wtimes span{font-size:12px;font-weight:700;padding:4px 9px;border-radius:99px;background:#232326;color:var(--dim)}
+.wtimes span.past{opacity:.4}
+.wtimes span.next{background:var(--blue);color:#fff}
+.hist{display:grid;grid-template-columns:auto 1fr auto auto;gap:6px 10px;align-items:center;font-size:13px}
+.hist .hb2{height:6px;background:#232326;border-radius:6px;overflow:hidden}
+.hist .hb2 i{display:block;height:100%;background:var(--blue)}
+.hist .hd{color:var(--dim);font-weight:600}
+.hist .hv{color:var(--dim);font-variant-numeric:tabular-nums;text-align:right}
+.meal{font-size:19px;font-weight:800;letter-spacing:-.01em;margin-top:4px;line-height:1.25}
+.wlog{display:flex;gap:8px;margin-top:10px}
+.wlog input{font:inherit;font-size:17px;font-weight:700;background:var(--card2);color:var(--text);border:0;border-radius:12px;padding:11px 12px;min-width:0}
+.wlog input[type=number]{flex:1}
+.wlog input[type=date]{flex:1.2;font-size:14px}
+.wlog button{padding:0 16px;border-radius:12px;background:var(--blue);color:#fff;font-weight:700}
+.wrow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:15px}
+.wrow button{color:var(--faint);font-size:15px;padding:0 4px}
 /* empty */
 .empty{text-align:center;padding:40px 20px;color:var(--dim)}
 .empty .big{color:var(--text);margin-bottom:6px}
@@ -215,6 +241,7 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
     <button data-sub="skill">Skill</button>
     <button data-sub="release">Release</button>
     <button data-sub="care">Care</button>
+    <button data-sub="nutrition">Nutrition</button>
   </div>
 
   <!-- BUILD -->
@@ -269,6 +296,65 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
   <div class="sub" id="s-skill">
     <div class="small muted" style="margin:0 4px 12px">Hit the level, tap it, move up. Tap a lower level to step back.</div>
     <div id="skills"></div>
+  </div>
+
+  <!-- NUTRITION -->
+  <div class="sub" id="s-nutrition">
+    <div class="card hero">
+      <div class="row"><span class="label">Today</span><span class="pill" id="n-next"></span></div>
+      <div class="nsec">
+        <div class="row"><div><div class="label">Water</div><div class="nstat" id="n-water"></div></div></div>
+        <div class="progress"><i id="n-water-bar"></i></div>
+        <div class="nbtns"><button id="n-w-undo">Undo</button><button id="n-w-glass">+1 glass</button><button class="primary" id="n-w-bottle">+ bottle</button></div>
+        <div class="wtimes" id="n-wtimes"></div>
+      </div>
+      <div class="nsec">
+        <div class="label">Milk</div><div class="nstat" id="n-milk"></div>
+        <div class="nbtns"><button id="n-m-undo">Undo</button><button class="primary" id="n-m-add" style="flex:2">+1 glass of milk</button></div>
+      </div>
+      <div class="nsec"><div id="n-creatine"></div></div>
+      <div class="nsec">
+        <div class="row"><span class="label">Protein</span><span class="small muted" id="n-pro-total"></span></div>
+        <div class="progress"><i id="n-pro-bar"></i></div>
+        <div id="n-protein"></div>
+      </div>
+    </div>
+
+    <h2>Today's breakfast</h2>
+    <div class="card"><div class="label" id="n-bf-name"></div><div class="meal" id="n-bf"></div><div class="small muted" style="margin-top:8px">Rushed day backup: no-whey shake</div></div>
+
+    <h2>Today's lunch</h2>
+    <div class="card" id="n-lunch"></div>
+    <details><summary>Lunch rotation<span class="chev"></span></summary><div class="dbody"><ol class="steps" id="n-lunch-list"></ol></div></details>
+
+    <h2>Default day</h2>
+    <div class="card"><div id="n-day"></div></div>
+
+    <h2>Rules</h2>
+    <div class="card" id="n-rules"></div>
+
+    <h2>Shake</h2>
+    <div class="card">
+      <div style="font-weight:700">No-whey shake</div>
+      <div class="small muted" style="margin-top:2px">~800–900 kcal · ~28–30g protein</div>
+      <ol class="steps" style="margin-top:8px"><li>500ml milk</li><li>40g oats</li><li>2 tbsp peanut butter</li><li>1 banana</li><li>Honey</li></ol>
+    </div>
+
+    <h2>Weight · Monday weigh-in</h2>
+    <div class="card">
+      <div class="row"><div><div class="label">Latest</div><div class="nstat" id="n-wt-now"></div></div><div style="text-align:right"><div class="label">Target</div><div style="color:var(--blue);font-weight:800;font-size:18px">73–75kg</div><div class="small muted">0.25–0.4kg/week</div></div></div>
+      <div id="n-wt-chart" style="margin-top:12px"></div>
+      <div class="small" style="font-weight:700;margin-top:8px" id="n-wt-trend"></div>
+      <div class="wlog"><input type="number" step="0.1" inputmode="decimal" placeholder="kg" id="n-wt-kg"><input type="date" id="n-wt-date"><button id="n-wt-add">Log</button></div>
+      <div class="small muted" style="margin-top:10px">3-week trend over 0.5kg/week → trim extras.<br>3-week trend under 0.15kg/week → add one no-whey shake a day.</div>
+      <details style="background:none;margin:10px 0 0"><summary style="padding:10px 0">All weigh-ins<span class="chev"></span></summary><div id="n-wt-list"></div></details>
+    </div>
+
+    <h2>Supplements</h2>
+    <div class="card"><div style="font-weight:700">Creatine monohydrate</div><div class="small muted">6g daily with breakfast, every day. Nothing else needed.</div></div>
+
+    <h2>Last 7 days</h2>
+    <div class="card"><div class="hist" id="n-hist"></div></div>
   </div>
 
   <!-- RELEASE -->
@@ -493,13 +579,10 @@ const WEEK={
 };
 const DAILY=[
   {t:'Sunlight',s:'15–20 min walk'},
-  {t:'Water',s:'400–500ml on waking'},
-  {t:'Creatine',s:'6g with breakfast'},
   {t:'Mobility',s:'nightly · ~8 min · before breathing in bed'},
   {t:'Debrief',s:'log today\'s session'}
 ];
 const BENCH=[
-  {k:'Bodyweight',now:'70.0kg',target:'73–75kg',wide:1},
   {k:'Press',now:'25 × 7',target:'30 × 8'},
   {k:'Squat',now:'',target:'140–145kg at neutral depth'},
   {k:'Pull-ups',now:'5',target:'10'},
@@ -518,7 +601,7 @@ const RULES=[
   '<b>Train hard.</b> Main lifts: sets 1–2 at RIR 1, last set to technical failure. Accessories: last set to failure.',
   '<b>Progress every week.</b> Top of the range on every set, then add weight.',
   '<b>Never skip legs or the raw day.</b> If a week breaks, those two stay.',
-  '<b>Log everything.</b> Weight × reps every set. Weigh in every Monday.'
+  '<b>Log everything.</b> Weight × reps every set.'
 ];
 const CUE={
   press:'Blades back and down first. Elbows 45–60° from the torso. DBs finish over the shoulders. Stop the set if the left shrugs or rolls forward.',
@@ -587,8 +670,8 @@ const PROGRAM=[
   ],note:'Max intent. Full rest. No conditioning, ever. If a rep is slower than the last, stop that block.'}
 ];
 const ROUTINES=[
-  {name:'Morning',steps:['Wake at the fixed time','Water','Sun walk','90/90 breathing','Breakfast with protein + creatine']},
-  {name:'Night',steps:['Phone away, dim lights','Snack if hungry','Nightly mobility, ~8 min','In bed: sighs, or in 4 / out 6–8','Lights out 8h before wake']},
+  {name:'Morning',steps:['Wake at the fixed time','Sun walk','90/90 breathing']},
+  {name:'Night',steps:['Phone away, dim lights','Nightly mobility, ~8 min','In bed: sighs, or in 4 / out 6–8','Lights out 8h before wake']},
   {name:'Priming',steps:['Bear breathing × 5','Serratus wall push','Serratus punch, left first','Scapular pull-ups','Push-up plus (push days)']},
   {name:'Ramp sets',steps:['~60% × 6–8','~90% × 2–3 only','Working sets','e.g. flat DB: 15kg × 6–8 → 22.5kg × 2–3 → 25kg','Heavy legs or cold mornings: add a light × 8–10 first']},
   {name:'Nightly mobility · ~8 min',steps:[
@@ -599,8 +682,7 @@ const ROUTINES=[
     '<span class="small muted">Control at end range, not more range. Breathe 360. Strong stretch, never pain.</span>'
   ]},
   {name:'Box squat depth',steps:['Film a side-on bodyweight squat','Find where the tailbone starts to tuck','Final box sits 2–3cm above that','Lower the box 2–3cm whenever all sets hit 6']},
-  {name:'360 breath',steps:['In through the nose ~4s, ribs widen sideways and into the back','Out through the mouth ~6s until the ribs drop']},
-  {name:'Shake',steps:['500ml milk','40g oats','2 tbsp peanut butter','1 banana + honey']}
+  {name:'360 breath',steps:['In through the nose ~4s, ribs widen sideways and into the back','Out through the mouth ~6s until the ribs drop']}
 ];
 const WHY=['“I want to get <span>strong as fuck</span>.”','“Strong, muscular, and <span>explosive</span>.”','“I don\'t want to just be toned. I want to get <span>big</span> too.”','“I have <span>no excuses</span> to not be the most consistent.”'];
 const PATTERNS=['Skipping legs','Going on and off with the gym','Waiting 4+ hours to eat','Late nights on the phone','Left shoulder hiking','Standing staggered, left leg back','Underloading out of caution (the “humble gimmick”)','Random easy reps instead of hard sets','Chasing feel or new exercise trends','Too many goals at once','Not logging numbers'];
@@ -719,6 +801,93 @@ $('today-card').onclick=()=>{
   $('day-sheet-body').querySelectorAll('.ex.hascue').forEach(e=>e.onclick=()=>e.classList.toggle('open'));
   $('day-sheet').classList.add('on');
 };
+/* ================= NUTRITION ================= */
+const NT={waterTarget:2500,milkTarget:3,proTarget:130};
+const PROTEIN=[['Breakfast','~25–35g',30],['Post-gym milk','~8g',8],['Lunch','~30–40g',35],['Snack','~10–30g',20],['Dinner','~30g',30],['Night snack','~8g',8]];
+const WATER_TIMES=[[9,0,'9:00'],[10,30,'10:30'],[13,15,'1:15'],[16,0,'4:00'],[19,0,'7:00']];
+const BREAKFASTS=[
+  {n:'Oats',t:'80–100g oats cooked in 400ml milk + banana + honey + spoon of PB',p:'~25g protein'},
+  {n:'Eggs',t:'3 eggs on 2 toast with PB + glass of milk',p:'~35g protein'}];
+const LUNCHES=[
+  {n:'Tuna rice',t:'185g tin tuna + 2–3 fists rice + mayo or avocado + milk',p:'~40g'},
+  {n:'Sardine rice',t:'Sardines + rice + fried egg + soy/chilli + milk',p:'~32g'},
+  {n:'Egg fried rice',t:'3–4 eggs + rice + frozen veg + soy + milk',p:'~30g'},
+  {n:'Leftovers',t:'e.g. beef stew + rice, big plate + milk',p:'~30–40g'}];
+const DEFDAY=[['9:00','Wake: water 400–500ml + creatine'],['9:05','Outside 10–15 min: sunlight, breathing, light mobility'],['9:30','Breakfast'],['10:30','Fill gym bottle (500–750ml during session). Banana + milk only if hungry'],['11:00','Gym'],['12:30','Milk or Up&Go'],['1:15','Lunch + glass of water'],['4:00','Snack (no-whey shake or fruit + nuts) + glass of water'],['7:00','Dinner + glass of water'],['10:00','Snack: milk + banana or nuts'],['12:00','Wind-down'],['1:00','Lights out']];
+const NRULES=['Meals before 3pm are the biggest, ~2/3 of the day\'s food. Dinner is a bonus.','Plate: 1–2 palms protein · 2–3 fists carbs · 1–2 thumbs fat · 1 fist fruit/veg · glass of milk.','Finished it easily and not full → add more next time, one part at a time.','Eat every 3–4 hours, hungry or not.','Tuna: 185g tins, any brand. Skipjack is fine (lowest mercury). In oil for more calories. Rotate with sardines and eggs. Rice cooked in bulk.','Water check: pale yellow urine. Milk counts toward fluids.'];
+
+function nutToday(){
+  const k=keyFor(new Date());
+  if(!S.nut||S.nut.date!==k)S.nut={date:k,water:[],milk:0,creatine:false,protein:{},day:{}};
+  S.nutHist=S.nutHist||{};
+  if(S.lunch&&S.lunch.doneOn&&S.lunch.doneOn!==k){S.lunch.idx=S.lunch.next;S.lunch.doneOn=null}
+  S.lunch=S.lunch||{idx:0,doneOn:null};
+  if(!S.weights)S.weights=[{d:'2026-11-02',kg:70.0}];
+  return S.nut;
+}
+function proTotal(n){return PROTEIN.reduce((a,p)=>a+(n.protein[p[0]]?p[2]:0),0)}
+function nutSave(){const n=S.nut;S.nutHist[n.date]={w:n.water.reduce((a,b)=>a+b,0),m:n.milk,p:proTotal(n)};save()}
+function nextWater(){const d=new Date(),m=d.getHours()*60+d.getMinutes();return WATER_TIMES.findIndex(t=>t[0]*60+t[1]>=m-15)}
+function renderNut(){
+  const n=nutToday();const wml=n.water.reduce((a,b)=>a+b,0);
+  $('n-water').innerHTML=wml.toLocaleString()+'<small> / 2,500ml</small>';
+  $('n-water-bar').style.width=Math.min(100,wml/NT.waterTarget*100)+'%';
+  $('n-w-undo').disabled=!n.water.length;
+  const ni=nextWater();
+  $('n-wtimes').innerHTML=WATER_TIMES.map((t,i)=>'<span class="'+(ni===-1||i<ni?'past':i===ni?'next':'')+'">'+t[2]+'</span>').join('');
+  $('n-next').textContent=ni===-1?'Water times done':'Next water · '+WATER_TIMES[ni][2];
+  $('n-milk').innerHTML=n.milk+'<small> / 3+ glasses</small>';
+  $('n-m-undo').disabled=!n.milk;
+  checklist($('n-creatine'),[{t:'Creatine 6g',s:'with breakfast'}],n,()=>{n.creatine=!!n['Creatine 6g'];nutSave()});
+  const pt=proTotal(n);$('n-pro-total').textContent='~'+pt+'g of 130g';$('n-pro-bar').style.width=Math.min(100,pt/NT.proTarget*100)+'%';
+  checklist($('n-protein'),PROTEIN.map(p=>({t:p[0],s:p[1]})),n.protein,()=>{const t=proTotal(n);$('n-pro-total').textContent='~'+t+'g of 130g';$('n-pro-bar').style.width=Math.min(100,t/NT.proTarget*100)+'%';nutSave();renderHist()});
+  // breakfast
+  const st=new Date(new Date().getFullYear(),0,0),doy=Math.floor((new Date()-st)/864e5);const bf=BREAKFASTS[doy%2];
+  $('n-bf-name').textContent=bf.n+' · '+bf.p;$('n-bf').textContent=bf.t;
+  // lunch
+  const L=LUNCHES[S.lunch.idx],done=S.lunch.doneOn===n.date;
+  $('n-lunch').innerHTML='<div class="label">'+(done?'Done today ✓':'Up today')+' · '+L.p+' protein</div><div class="meal">'+L.n+'</div><div class="small muted" style="margin-top:4px">'+L.t+'</div>'+
+    (done?'<div class="small" style="color:var(--blue);font-weight:700;margin-top:10px">Tomorrow: '+LUNCHES[S.lunch.next].n+'</div><button class="btn" id="n-l-undo">Undo</button>':'<button class="btn primary" id="n-l-done">Done</button>');
+  if(done)$('n-l-undo').onclick=()=>{S.lunch.doneOn=null;save();renderNut()};
+  else $('n-l-done').onclick=()=>{S.lunch.doneOn=n.date;S.lunch.next=(S.lunch.idx+1)%LUNCHES.length;save();renderNut()};
+  $('n-lunch-list').innerHTML=LUNCHES.map((l,i)=>'<li'+(i===S.lunch.idx?' style="color:var(--blue)"':'')+'><b>'+l.n+'</b> <span class="small muted">'+l.p+'</span><div class="small muted">'+l.t+'</div></li>').join('');
+  // default day
+  checklist($('n-day'),DEFDAY.map(d=>({t:d[1],s:d[0]})),n.day,()=>save());
+  $('n-rules').innerHTML=NRULES.map(r=>'<div class="line">'+r+'</div>').join('');
+  renderWeight();renderHist();
+}
+function renderHist(){
+  const rows=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=keyFor(d);const h=S.nutHist[k]||{w:0,m:0,p:0};rows.push([d,h])}
+  $('n-hist').innerHTML=rows.reverse().map(([d,h])=>'<span class="hd">'+d.toLocaleDateString('en-AU',{weekday:'short'})+'</span><div class="hb2"><i style="width:'+Math.min(100,h.w/2500*100)+'%"></i></div><span class="hv">'+(h.w/1000).toFixed(1)+'L · '+h.m+' milk</span><span class="hv">'+h.p+'g</span>').join('');
+}
+function renderWeight(){
+  const W=S.weights.slice().sort((a,b)=>a.d<b.d?-1:1);const last=W[W.length-1];
+  $('n-wt-now').innerHTML=last?last.kg.toFixed(1)+'<small>kg</small>':'—';
+  // chart
+  if(W.length>=2){const w=320,h=90,pad=6;const t0=+new Date(W[0].d),t1=+new Date(last.d)||t0+1;const kgs=W.map(x=>x.kg);let lo=Math.min(...kgs,70)-0.5,hi=Math.max(...kgs,73)+0.5;
+    const X=t=>pad+(t-t0)/Math.max(1,t1-t0)*(w-2*pad),Y=k=>h-pad-(k-lo)/(hi-lo)*(h-2*pad);
+    const pts=W.map(x=>X(+new Date(x.d))+','+Y(x.kg)).join(' ');
+    $('n-wt-chart').innerHTML='<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;height:auto;display:block"><rect x="0" y="'+Y(75)+'" width="'+w+'" height="'+(Y(73)-Y(75))+'" fill="rgba(61,139,253,.12)"/><polyline points="'+pts+'" fill="none" stroke="#3d8bfd" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+W.map(x=>'<circle cx="'+X(+new Date(x.d))+'" cy="'+Y(x.kg)+'" r="3" fill="#f5f5f7"/>').join('')+'</svg>'}
+  else $('n-wt-chart').innerHTML='<div class="small muted">Log a second weigh-in to see the trend line.</div>';
+  // 3-week trend
+  let tr='';if(W.length>=2){const lt=+new Date(last.d);const base=W.filter(x=>lt-new Date(x.d)>=20*864e5).pop();
+    if(base){const wk=(last.kg-base.kg)/((lt-new Date(base.d))/(7*864e5));tr='3-week trend: '+(wk>=0?'+':'')+wk.toFixed(2)+'kg/week → '+(wk>0.5?'trim extras':wk<0.15?'add one no-whey shake a day':'on track')}
+    else tr='3-week trend shows after 3 weeks of weigh-ins.'}
+  $('n-wt-trend').textContent=tr;$('n-wt-trend').style.color=/on track/.test(tr)?'var(--blue)':'var(--text)';
+  $('n-wt-list').innerHTML=W.slice().reverse().map(x=>'<div class="wrow"><span>'+new Date(x.d+'T00:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'})+'</span><span><b>'+x.kg.toFixed(1)+'kg</b> <button data-d="'+x.d+'">✕</button></span></div>').join('');
+  $('n-wt-list').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.weights=S.weights.filter(x=>x.d!==b.dataset.d);save();renderWeight()});
+}
+$('n-w-glass').onclick=()=>{S.nut.water.push(250);nutSave();renderNut()};
+$('n-w-bottle').onclick=()=>{S.nut.water.push(500);nutSave();renderNut()};
+$('n-w-undo').onclick=()=>{S.nut.water.pop();nutSave();renderNut()};
+$('n-m-add').onclick=()=>{S.nut.milk++;nutSave();renderNut()};
+$('n-m-undo').onclick=()=>{if(S.nut.milk>0)S.nut.milk--;nutSave();renderNut()};
+(()=>{const d=new Date();$('n-wt-date').value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})();
+$('n-wt-add').onclick=()=>{const kg=parseFloat($('n-wt-kg').value),d=$('n-wt-date').value;if(!kg||!d)return;S.weights=S.weights.filter(x=>x.d!==d);S.weights.push({d,kg});save();$('n-wt-kg').value='';renderWeight();$('n-wt-kg').blur()};
+renderNut();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderNut()});
+setInterval(()=>{if(!document.hidden)renderNut()},60000);
+
 /* ---------- handbook ---------- */
 let hbLoaded=false;
 $('open-hb').onclick=()=>{
