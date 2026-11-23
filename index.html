@@ -205,6 +205,13 @@ summary .meta{color:var(--dim);font-weight:500;font-size:13px;margin-left:auto}
 .wlog button{padding:0 16px;border-radius:12px;background:var(--blue);color:#fff;font-weight:700}
 .wrow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:15px}
 .wrow button{color:var(--faint);font-size:15px;padding:0 4px}
+/* swipe carousels */
+.carousel{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -16px;padding:0 16px;scroll-padding:0 16px}
+.carousel::-webkit-scrollbar{display:none}
+.carousel .card{flex:0 0 calc(100% - 28px);scroll-snap-align:start;margin-bottom:0}
+.cdots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+.cdots i{width:6px;height:6px;border-radius:50%;background:#3a3a3c;transition:all .2s}
+.cdots i.on{background:var(--blue);width:16px;border-radius:4px}
 /* empty */
 .empty{text-align:center;padding:40px 20px;color:var(--dim)}
 .empty .big{color:var(--text);margin-bottom:6px}
@@ -321,11 +328,11 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
     </div>
 
     <h2>Today's breakfast</h2>
-    <div class="card"><div class="label" id="n-bf-name"></div><div class="meal" id="n-bf"></div><div class="small muted" style="margin-top:8px">Rushed day backup: no-whey shake</div></div>
+    <div class="carousel" id="n-bf-car"></div><div class="cdots" id="n-bf-dots"></div>
+    <div class="small muted" style="margin:6px 4px 0">Rushed day backup: no-whey shake</div>
 
     <h2>Today's lunch</h2>
-    <div class="card" id="n-lunch"></div>
-    <details><summary>Lunch rotation<span class="chev"></span></summary><div class="dbody"><ol class="steps" id="n-lunch-list"></ol></div></details>
+    <div class="carousel" id="n-lunch-car"></div><div class="cdots" id="n-lunch-dots"></div>
 
     <h2>Default day</h2>
     <div class="card"><div id="n-day"></div></div>
@@ -820,8 +827,6 @@ function nutToday(){
   const k=keyFor(new Date());
   if(!S.nut||S.nut.date!==k)S.nut={date:k,water:[],milk:0,creatine:false,protein:{},day:{}};
   S.nutHist=S.nutHist||{};
-  if(S.lunch&&S.lunch.doneOn&&S.lunch.doneOn!==k){S.lunch.idx=S.lunch.next;S.lunch.doneOn=null}
-  S.lunch=S.lunch||{idx:0,doneOn:null};
   if(!S.weights)S.weights=[{d:'2026-11-02',kg:70.0}];
   return S.nut;
 }
@@ -841,16 +846,6 @@ function renderNut(){
   checklist($('n-creatine'),[{t:'Creatine 6g',s:'with breakfast'}],n,()=>{n.creatine=!!n['Creatine 6g'];nutSave()});
   const pt=proTotal(n);$('n-pro-total').textContent='~'+pt+'g of 130g';$('n-pro-bar').style.width=Math.min(100,pt/NT.proTarget*100)+'%';
   checklist($('n-protein'),PROTEIN.map(p=>({t:p[0],s:p[1]})),n.protein,()=>{const t=proTotal(n);$('n-pro-total').textContent='~'+t+'g of 130g';$('n-pro-bar').style.width=Math.min(100,t/NT.proTarget*100)+'%';nutSave();renderHist()});
-  // breakfast
-  const st=new Date(new Date().getFullYear(),0,0),doy=Math.floor((new Date()-st)/864e5);const bf=BREAKFASTS[doy%2];
-  $('n-bf-name').textContent=bf.n+' · '+bf.p;$('n-bf').textContent=bf.t;
-  // lunch
-  const L=LUNCHES[S.lunch.idx],done=S.lunch.doneOn===n.date;
-  $('n-lunch').innerHTML='<div class="label">'+(done?'Done today ✓':'Up today')+' · '+L.p+' protein</div><div class="meal">'+L.n+'</div><div class="small muted" style="margin-top:4px">'+L.t+'</div>'+
-    (done?'<div class="small" style="color:var(--blue);font-weight:700;margin-top:10px">Tomorrow: '+LUNCHES[S.lunch.next].n+'</div><button class="btn" id="n-l-undo">Undo</button>':'<button class="btn primary" id="n-l-done">Done</button>');
-  if(done)$('n-l-undo').onclick=()=>{S.lunch.doneOn=null;save();renderNut()};
-  else $('n-l-done').onclick=()=>{S.lunch.doneOn=n.date;S.lunch.next=(S.lunch.idx+1)%LUNCHES.length;save();renderNut()};
-  $('n-lunch-list').innerHTML=LUNCHES.map((l,i)=>'<li'+(i===S.lunch.idx?' style="color:var(--blue)"':'')+'><b>'+l.n+'</b> <span class="small muted">'+l.p+'</span><div class="small muted">'+l.t+'</div></li>').join('');
   // default day
   checklist($('n-day'),DEFDAY.map(d=>({t:d[1],s:d[0]})),n.day,()=>save());
   $('n-rules').innerHTML=NRULES.map(r=>'<div class="line">'+r+'</div>').join('');
@@ -884,6 +879,26 @@ $('n-m-add').onclick=()=>{S.nut.milk++;nutSave();renderNut()};
 $('n-m-undo').onclick=()=>{if(S.nut.milk>0)S.nut.milk--;nutSave();renderNut()};
 (()=>{const d=new Date();$('n-wt-date').value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})();
 $('n-wt-add').onclick=()=>{const kg=parseFloat($('n-wt-kg').value),d=$('n-wt-date').value;if(!kg||!d)return;S.weights=S.weights.filter(x=>x.d!==d);S.weights.push({d,kg});save();$('n-wt-kg').value='';renderWeight();$('n-wt-kg').blur()};
+/* swipeable breakfast + lunch */
+function carousel(car,dots,items,start,onPick){
+  car.innerHTML=items.map((x,i)=>'<div class="card"><div class="label">'+(i+1)+' of '+items.length+' · '+x.p+(/protein/.test(x.p)?'':' protein')+'</div><div class="meal">'+x.n+'</div><div class="small muted" style="margin-top:4px">'+x.t+'</div></div>').join('');
+  dots.innerHTML=items.map(()=>'<i></i>').join('');
+  const step=()=>{const c=car.children[0];return c?c.getBoundingClientRect().width+10:1};
+  const mark=i=>dots.querySelectorAll('i').forEach((d,j)=>d.classList.toggle('on',j===i));
+  mark(start);
+  requestAnimationFrame(()=>{car.scrollLeft=start*step()});
+  let t;car.addEventListener('scroll',()=>{clearTimeout(t);t=setTimeout(()=>{const i=Math.max(0,Math.min(items.length-1,Math.round(car.scrollLeft/step())));mark(i);onPick(i)},90)},{passive:true});
+  return ()=>{car.scrollLeft=start*step()};
+}
+const bfStart=(()=>{const k=keyFor(new Date());if(S.bfPick&&S.bfPick.date===k)return S.bfPick.idx;const st=new Date(new Date().getFullYear(),0,0);return Math.floor((new Date()-st)/864e5)%2})();
+const reBf=carousel($('n-bf-car'),$('n-bf-dots'),BREAKFASTS,bfStart,i=>{S.bfPick={date:keyFor(new Date()),idx:i};save()});
+const lunchStart=(S.lunch&&typeof S.lunch.pick==='number')?S.lunch.pick:0;
+const reLunch=carousel($('n-lunch-car'),$('n-lunch-dots'),LUNCHES,lunchStart,i=>{S.lunch=S.lunch||{};S.lunch.pick=i;save()});
+// sub-tab is hidden at load, so re-snap when Nutrition opens
+document.querySelector('#seg-phys button[data-sub=nutrition]').addEventListener('click',()=>requestAnimationFrame(()=>{
+  const k=keyFor(new Date());$('n-bf-car').scrollLeft=((S.bfPick&&S.bfPick.date===k)?S.bfPick.idx:bfStart)*($('n-bf-car').children[0].getBoundingClientRect().width+10);
+  $('n-lunch-car').scrollLeft=((S.lunch&&S.lunch.pick)||0)*($('n-lunch-car').children[0].getBoundingClientRect().width+10);
+}));
 renderNut();
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderNut()});
 setInterval(()=>{if(!document.hidden)renderNut()},60000);
