@@ -366,10 +366,33 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
 
   <!-- RELEASE -->
   <div class="sub" id="s-release">
-    <div class="card empty">
-      <div class="big">Release</div>
-      Face · scalp · neck · hips.<br>Waiting on your brain-dump.
+    <div class="card hero">
+      <div class="row"><span class="label" id="r-month"></span><span class="pill" id="r-count"></span></div>
+      <div class="big" style="margin-top:4px">Tonight's release</div>
+      <div class="muted small" style="margin-top:4px">Evening, after a shower. Scalp is the main emphasis.</div>
+      <div class="progress"><i id="r-bar"></i></div>
+      <button class="btn primary" id="r-start">Start guided</button>
     </div>
+    <div class="small" style="text-align:center;color:var(--blue);font-weight:700;margin:4px 0 6px">Slow exhale on every hold.</div>
+
+    <h2>Resets · all day</h2>
+    <div class="card">
+      <div class="row"><div class="nstat" id="r-resets"></div><div class="small muted" style="text-align:right;max-width:55%">Brows heavy, teeth apart, tongue up, one slow belly exhale.</div></div>
+      <div class="nbtns"><button id="r-res-undo">Undo</button><button class="primary" id="r-res-add" style="flex:2">+1 reset</button></div>
+    </div>
+
+    <h2>Steps</h2>
+    <div id="r-steps"></div>
+
+    <details><summary>Monthly progression<span class="chev"></span></summary><div class="dbody">
+      <div class="line"><b>Month 1</b><div class="small muted">As listed. About 15 min.</div></div>
+      <div class="line"><b>Month 2</b><div class="small muted">Sheet push 4:00, pinch and lift 3:00. About 19 min.</div></div>
+      <div class="line"><b>Month 3+</b><div class="small muted">Sheet push 10:00, pinch and lift 6:00. About 31 min, light pressure.</div></div>
+      <div class="line"><div class="label">Start date</div><input type="date" class="input" id="r-start-date" style="font-size:17px"></div>
+      <div class="small muted" style="margin-top:6px">Extra time goes to the scalp only.</div>
+    </div></details>
+    <details><summary>Rules &amp; cautions<span class="chev"></span></summary><div class="dbody" id="r-rules"></div></details>
+    <details><summary>Completed<span class="meta" id="r-hist-meta"></span><span class="chev"></span></summary><div class="dbody" id="r-hist"></div></details>
   </div>
 
   <!-- CARE -->
@@ -476,6 +499,26 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
 <div class="sheet" id="hb-sheet">
   <div class="sheet-head"><b>Beast Protocol v3</b><button data-close="hb-sheet">Done</button></div>
   <div class="sheet-body hb" id="hb-pages"></div>
+</div>
+
+<!-- release guided sheet -->
+<div class="sheet" id="r-sheet">
+  <div class="sheet-head"><b id="r-g-pos">Step 1</b><button id="r-g-close">Close</button></div>
+  <div class="sheet-body" style="display:flex;flex-direction:column;min-height:calc(100vh - 80px)">
+    <div class="label" id="r-g-area"></div>
+    <div style="font-size:30px;font-weight:800;letter-spacing:-.02em;margin-top:4px" id="r-g-name"></div>
+    <div class="muted" style="margin-top:8px;font-size:16px;line-height:1.45" id="r-g-cue"></div>
+    <div style="flex:1;display:grid;place-items:center;text-align:center">
+      <div>
+        <div id="r-g-flash" style="color:var(--blue);font-weight:800;font-size:18px;min-height:26px"></div>
+        <div id="r-g-time" style="font-size:84px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1"></div>
+        <div class="muted" id="r-g-sub" style="margin-top:8px;font-weight:600"></div>
+      </div>
+    </div>
+    <div class="progress" style="margin-bottom:14px"><i id="r-g-bar"></i></div>
+    <div class="small" style="text-align:center;color:var(--blue);font-weight:700;margin-bottom:12px">Slow exhale on every hold.</div>
+    <div class="nbtns" style="margin-top:0"><button id="r-g-back">Back</button><button class="primary" id="r-g-pause" style="flex:1.4">Pause</button><button id="r-g-skip">Skip</button></div>
+  </div>
 </div>
 
 <!-- today sheet -->
@@ -902,6 +945,81 @@ document.querySelector('#seg-phys button[data-sub=nutrition]').addEventListener(
 renderNut();
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderNut()});
 setInterval(()=>{if(!document.hidden)renderNut()},60000);
+
+/* ================= RELEASE ================= */
+const REL=[
+  {a:'Scalp · main',n:'Scalp sheet push',d:[120,240,600],c:'Fingers spread, pads flat. Move the skin forward and back without sliding over the hair. Top, then crown, then temples.'},
+  {a:'Scalp · main',n:'Pinch and lift',d:[90,180,360],c:'Lift a fold of scalp off the skull and hold for 2 breaths. Top and crown.'},
+  {a:'Face',n:'Glabella and forehead',d:[90],c:'Roll the skin between the brows, pinch along each brow, then glide the palms up to the hairline and hold.'},
+  {a:'Jaw',n:'Masseter',d:[90],sides:1,c:'Thumb inside the cheek, fingers outside. Squeeze or small circles, jaw slack. Clean hands.'},
+  {a:'Jaw',n:'Temples',d:[60],c:'Fingertip circles while you slowly open and close, tongue on the palate.'},
+  {a:'Neck',n:'Suboccipitals',d:[90],sides:1,c:'Ball at the base of the skull, small "yes" nods.'},
+  {a:'Neck',n:'SCM pinch',d:[60],c:'Head turned slightly toward the side you\'re working. Light 3/10, 20–30s per spot. Left side first. Never the front of the throat.'},
+  {a:'Neck',n:'Left trap ball',d:[60],c:'Ball between the trap and a wall. Lean in and hold the tender spots.'},
+  {a:'Neck',n:'Chin nods',reps:10,hold:10,rest:3,c:'On your back. Tiny "yes" nod that flattens the neck toward the floor. SCM stays soft.'},
+  {a:'Bed',n:'Wind-down',d:[120],bed:1,c:'In bed. Phone away, belly breathing, face heavy.'}
+];
+const RRULES=['Pressure 4–5/10, never sharp. SCM stays at 3/10.','Move on once a spot softens. Extra time goes to the scalp only.','Long and light is fine. Long and hard isn\'t.','SCM: never press into the front of the throat.','Masseter: clean hands.','Jaw locking, a painful click, morning headaches, numbness or tingling → see a dentist, physio or GP.'];
+const fmt=t=>Math.floor(t/60)+':'+String(Math.round(t)%60).padStart(2,'0');
+function relMonth(){if(!S.relStart){const d=new Date();S.relStart=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');save()}
+  const days=Math.floor((new Date()-new Date(S.relStart+'T00:00:00'))/864e5);return Math.max(1,Math.min(3,Math.floor(days/30)+1))}
+function relDur(x){const m=relMonth();return x.reps?x.reps*(x.hold+x.rest):x.d[Math.min(m,x.d.length)-1]}
+function relToday(){const k=keyFor(new Date());if(!S.rel||S.rel.date!==k)S.rel={date:k,ticks:{},resets:0};S.relHist=S.relHist||[];return S.rel}
+function relCheckDone(){const r=relToday();const main=REL.filter(x=>!x.bed).every(x=>r.ticks[x.n]);
+  if(main&&!S.relHist.includes(r.date)){S.relHist.push(r.date);save();celebrate('Release','Routine done','Wind-down in bed later.')}
+  if(!main&&S.relHist.includes(r.date)){S.relHist=S.relHist.filter(d=>d!==r.date);save()}}
+function renderRel(){
+  const r=relToday(),m=relMonth();
+  const total=REL.reduce((a,x)=>a+relDur(x),0);
+  $('r-month').textContent='Month '+m+(m===3?'+':'')+' · ~'+Math.round(total/60)+' min';
+  const n=REL.filter(x=>r.ticks[x.n]).length;$('r-count').textContent=n+' / '+REL.length;$('r-bar').style.width=(n/REL.length*100)+'%';
+  $('r-resets').innerHTML=r.resets+'<small> / 20</small>';$('r-res-undo').disabled=!r.resets;
+  let html='',area='';
+  REL.forEach(x=>{if(x.a!==area){if(area)html+='</div>';area=x.a;html+='<div class="label" style="margin:14px 4px 6px">'+x.a+'</div><div class="card" style="padding-top:6px;padding-bottom:6px">'}
+    const dur=x.reps?x.reps+' × '+x.hold+'s':fmt(relDur(x))+(x.sides?' · '+fmt(relDur(x)/2)+' per side':'');
+    html+='<button class="check'+(r.ticks[x.n]?' done':'')+'" data-n="'+x.n+'"><span class="box">'+tickSVG+'</span><span class="ct">'+x.n+'<div class="cs">'+dur+'</div><div class="cs" style="color:var(--dim);font-weight:500;margin-top:2px">'+x.c+'</div></span></button>'});
+  $('r-steps').innerHTML=html+'</div>';
+  $('r-steps').querySelectorAll('.check').forEach(b=>b.onclick=()=>{const k=b.dataset.n;r.ticks[k]=!r.ticks[k];save();relCheckDone();renderRel()});
+  $('r-start-date').value=S.relStart;
+  const H=S.relHist.slice().sort().reverse();$('r-hist-meta').textContent=H.length+' days';
+  $('r-hist').innerHTML=H.length?H.slice(0,30).map(d=>'<div class="line">'+new Date(d.split('-').map((v,i)=>i===1?String(v).padStart(2,'0'):String(v).padStart(i?2:4,'0')).join('-')+'T00:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'})+'</div>').join(''):'<div class="small muted">Nothing yet.</div>';
+}
+$('r-rules').innerHTML=RRULES.map(x=>'<div class="line">'+x+'</div>').join('');
+$('r-res-add').onclick=()=>{const r=relToday();r.resets++;save();renderRel();if(r.resets===20)celebrate('Resets','20 / 20','Face heavy. Teeth apart.')};
+$('r-res-undo').onclick=()=>{const r=relToday();if(r.resets)r.resets--;save();renderRel()};
+$('r-start-date').onchange=()=>{if($('r-start-date').value){S.relStart=$('r-start-date').value;save();renderRel()}};
+
+/* guided mode */
+const G={i:0,end:0,left:0,paused:false,int:null,rep:0,phase:'hold',half:false,lock:null};
+function gAudio(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
+function beep(f,len){try{if(!AC)return;const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.setValueAtTime(.0001,AC.currentTime);g.gain.exponentialRampToValueAtTime(.3,AC.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+len);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+len+.02)}catch(e){}}
+function gLoad(i){const x=REL[i];G.i=i;G.half=false;G.rep=0;G.phase='hold';G.paused=false;$('r-g-pause').textContent='Pause';
+  $('r-g-pos').textContent='Step '+(i+1)+' of '+REL.length;$('r-g-area').textContent=x.a;$('r-g-name').textContent=x.n;$('r-g-cue').textContent=x.c;$('r-g-flash').textContent='';
+  $('r-g-bar').style.width=(i/REL.length*100)+'%';
+  gSet(x.reps?x.hold:relDur(x));}
+function gSet(sec){G.left=sec;G.end=Date.now()+sec*1000;gTick()}
+function gTick(){
+  const x=REL[G.i];if(G.paused)return;const left=Math.max(0,(G.end-Date.now())/1000);
+  $('r-g-time').textContent=fmt(Math.ceil(left));
+  if(x.reps)$('r-g-sub').textContent=(G.phase==='hold'?'Hold · rep ':'Relax · next rep ')+(G.rep+1)+' / '+x.reps;
+  else $('r-g-sub').textContent=x.sides?(G.half?'Second side':'First side · left'):'';
+  if(x.sides&&!G.half&&left<=relDur(x)/2){G.half=true;beep(660,.25);$('r-g-flash').textContent='Switch sides';setTimeout(()=>{if(G.half)$('r-g-flash').textContent=''},2500)}
+  if(left>0)return;
+  if(x.reps){if(G.phase==='hold'){G.rep++;beep(880,.15);if(G.rep>=x.reps)return gDone();G.phase='rest';gSet(x.rest)}else{G.phase='hold';beep(990,.12);gSet(x.hold)}return}
+  gDone();
+}
+function gDone(){const r=relToday();r.ticks[REL[G.i].n]=true;save();chime();relCheckDone();renderRel();
+  if(G.i<REL.length-1)gLoad(G.i+1);else{gStop();celebrate('Release','All done','Lights out.')}}
+function gStart(){gAudio();const r=relToday();const first=REL.findIndex(x=>!r.ticks[x.n]);gLoad(first<0?0:first);$('r-sheet').classList.add('on');clearInterval(G.int);G.int=setInterval(gTick,250);
+  try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(l=>G.lock=l).catch(()=>{})}catch(e){}}
+function gStop(){clearInterval(G.int);G.int=null;$('r-sheet').classList.remove('on');try{G.lock&&G.lock.release()}catch(e){}G.lock=null}
+$('r-start').onclick=gStart;
+$('r-g-close').onclick=gStop;
+$('r-g-pause').onclick=()=>{if(G.paused){G.paused=false;G.end=Date.now()+G.left*1000;$('r-g-pause').textContent='Pause'}else{G.left=Math.max(0,(G.end-Date.now())/1000);G.paused=true;$('r-g-pause').textContent='Resume'}};
+$('r-g-skip').onclick=()=>{if(G.i<REL.length-1)gLoad(G.i+1);else gStop()};
+$('r-g-back').onclick=()=>{gLoad(Math.max(0,G.i-1))};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&G.int){gTick();try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(l=>G.lock=l).catch(()=>{})}catch(e){}}});
+renderRel();
 
 /* ---------- handbook ---------- */
 let hbLoaded=false;
