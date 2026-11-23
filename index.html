@@ -233,6 +233,25 @@ summary .meta{color:var(--dim);font-weight:500;font-size:13px;margin-left:auto}
 .win-pill.on{background:var(--blue);color:#fff}
 .warn{margin-top:10px;font-size:14px;font-weight:700;color:#fff;background:rgba(61,139,253,.14);border-radius:10px;padding:9px 11px}
 #ritual-card.cleared{box-shadow:inset 0 0 0 1px rgba(61,139,253,.45)}
+/* today screen */
+.tl{display:flex;gap:12px;padding:9px 0;border-top:1px solid var(--line);align-items:flex-start;width:100%;text-align:left}
+.tl:first-child{border-top:0;padding-top:2px}
+.tl .tt{flex:0 0 40px;font-size:13px;font-weight:700;color:var(--dim);padding-top:3px;font-variant-numeric:tabular-nums}
+.tl .box{width:22px;height:22px;margin-top:1px}
+.tl .tx{flex:1;font-size:15px;font-weight:600;line-height:1.3}
+.tl.done .tx{color:var(--dim)}
+.tl.done .box{background:var(--blue);border-color:var(--blue)}
+.tl.done .box svg{stroke-dashoffset:0}
+.tl .att{margin-top:6px;background:var(--card2);border-radius:10px;padding:9px 10px;font-weight:500}
+.tl.now .tt{color:var(--blue)}
+.mini{display:flex;align-items:center;gap:8px}
+.mini .mv{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.mini .mv small{font-size:12px;color:var(--dim);font-weight:600}
+.mini button{padding:8px 11px;border-radius:10px;background:var(--card2);font-weight:700;font-size:13px}
+.mini button.p{background:var(--blue);color:#fff}
+.btb{font-size:13px;margin-top:4px}
+.btb b{font-weight:700}
+.export.sun{background:var(--blue);color:#fff}
 /* empty */
 .empty{text-align:center;padding:40px 20px;color:var(--dim)}
 .empty .big{color:var(--text);margin-bottom:6px}
@@ -259,6 +278,30 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
 </head>
 <body>
 <div class="app">
+
+<!-- ================= TODAY ================= -->
+<section class="view" id="v-today">
+  <div class="eyebrow" id="td-date"></div>
+  <h1>Today</h1>
+  <div class="card" style="padding:12px 16px">
+    <div class="row"><span class="label">Win the week</span><span class="win-pill" id="td-win-pill"></span></div>
+    <div class="row" style="margin-top:4px"><div class="mini"><span class="mv" id="td-win-n"></span></div><span class="small muted" id="td-win-legs"></span></div>
+    <div class="warn" id="td-warn" style="display:none;margin-top:8px">Never miss twice in a row.</div>
+  </div>
+  <div class="card" style="padding:12px 16px">
+    <div class="row"><div><div class="label">Water</div><div class="mini"><span class="mv" id="td-water"></span></div></div>
+      <div class="mini"><button id="td-w-undo">↶</button><button id="td-w-g">+glass</button><button class="p" id="td-w-b">+bottle</button></div></div>
+    <div class="progress" style="margin:8px 0 10px"><i id="td-water-bar"></i></div>
+    <div class="row"><div><div class="label">Milk</div><div class="mini"><span class="mv" id="td-milk"></span></div></div>
+      <div class="mini"><button id="td-m-undo">↶</button><button class="p" id="td-m-add">+glass of milk</button></div></div>
+  </div>
+  <h2>Timeline</h2>
+  <div class="card" id="td-tl"></div>
+  <button class="btn export" id="td-export">Copy weekly summary for coach</button>
+  <div class="small muted" style="text-align:center;margin-top:6px" id="td-export-note"></div>
+</section>
+
+<!-- export fallback sheet -->
 
 <!-- ================= PHYSICAL ================= -->
 <section class="view" id="v-physical">
@@ -525,6 +568,7 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
 
 <!-- tab bar -->
 <nav class="tabbar" id="tabbar">
+  <button data-v="today"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="16" rx="3"/><path d="M3.5 9.5h17M8 2.5v4M16 2.5v4"/><circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"/></svg>Today</button>
   <button data-v="physical"><svg viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg>Physical</button>
   <button data-v="academic"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg>Academic</button>
   <button data-v="mental"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>Mental</button>
@@ -554,6 +598,12 @@ select{font:inherit;background:var(--card2);color:var(--text);border:0;border-ra
     <div class="small" style="text-align:center;color:var(--blue);font-weight:700;margin-bottom:12px">Slow exhale on every hold.</div>
     <div class="nbtns" style="margin-top:0"><button id="r-g-back">Back</button><button class="primary" id="r-g-pause" style="flex:1.4">Pause</button><button id="r-g-skip">Skip</button></div>
   </div>
+</div>
+
+<div class="sheet" id="exp-sheet">
+  <div class="sheet-head"><b>Weekly summary</b><button data-close="exp-sheet">Done</button></div>
+  <div class="sheet-body"><div class="small muted" style="margin-bottom:8px">Couldn't copy automatically. Press and hold, then Select All and Copy.</div>
+  <textarea id="exp-text" readonly style="width:100%;min-height:70vh;font:inherit;font-size:14px;background:var(--card);color:var(--text);border:0;border-radius:12px;padding:12px;-webkit-user-select:text;user-select:text"></textarea></div>
 </div>
 
 <!-- today sheet -->
@@ -615,6 +665,7 @@ const tickSVG='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
 
 /* ---------- tabs ---------- */
 function showView(v){
+  if(v==='today'&&window.renderToday)renderToday();
   document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));
   document.querySelectorAll('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   S.view=v;save();window.scrollTo(0,0);
@@ -782,14 +833,16 @@ const w=WEEK[now.getDay()];
 $('day-name').textContent='Today · '+DN[now.getDay()];
 $('day-tag').textContent=w.tag;$('day-main').textContent=w.main;$('day-home').textContent=w.home;
 
-checklist($('daily'),DAILY,S.daily,()=>{
+window._dailyChange=()=>{
   const n=DAILY.filter(d=>S.daily[d.t]).length;
   $('daily-bar').style.width=(n/DAILY.length*100)+'%';
   const was=$('daily-card').classList.contains('cleared');
   $('daily-card').classList.toggle('cleared',n===DAILY.length);
   if(n===DAILY.length&&!was&&window._dailyReady)celebrate('Daily','Day cleared','All five done.');
   const hk=keyFor(new Date());const had=!!S.hist[hk];S.hist[hk]=!!S.daily['Debrief'];if(had!==S.hist[hk]){save();window.renderWeek&&renderWeek();window.renderWin&&renderWin()}
-});
+  window.renderToday&&renderToday();
+};
+checklist($('daily'),DAILY,S.daily,window._dailyChange);
 
 window._dailyReady=true;
 
@@ -807,11 +860,15 @@ $('intensity').innerHTML=INTENSITY.map(x=>'<div class="line">'+x+'</div>').join(
 /* week strip */
 function sessionOn(k){if(S.hist[k])return true;const iso=(()=>{const [y,m,d]=k.split('-');return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')})();return Object.values(S.logs||{}).some(L=>L.some(x=>x.d===iso))}
 function weekDays(){const t=new Date();t.setHours(0,0,0,0);const off=(t.getDay()+6)%7;const mon=new Date(t);mon.setDate(t.getDate()-off);return [...Array(7)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d})}
-function renderWin(){
+function winData(){
   const days=weekDays(),t=new Date();t.setHours(0,0,0,0);
   const n=days.filter(d=>d<=t&&sessionOn(keyFor(d))).length;
   const mon=days[0],legsA=!!S.hist[keyFor(mon)]||PROGRAM.find(x=>x.name==='Legs A').ex.some(e=>(S.logs[e[0]]||[]).some(x=>new Date(x.d+'T00:00:00')>=mon));
-  const won=n>=4&&legsA;
+  const y=new Date(t);y.setDate(t.getDate()-1);
+  return {days,t,n,mon,legsA,won:n>=4&&legsA,full:n>=7,missed:!sessionOn(keyFor(y))&&!sessionOn(keyFor(t))};
+}
+function renderWin(){
+  const {days,t,n,mon,legsA,won}=winData();
   $('win-n').innerHTML=n+'<small> / 4</small>';
   $('win-sub').innerHTML='Gym sessions this week · Legs A '+(legsA?'<b style="color:var(--blue)">✓</b>':'not yet')+'<br>Plus daily basics: food, water, sleep';
   $('win-bar').style.width=Math.min(100,n/4*100)+'%';
@@ -971,7 +1028,7 @@ function nutToday(){
   return S.nut;
 }
 function proTotal(n){return PROTEIN.reduce((a,p)=>a+(n.protein[p[0]]?p[2]:0),0)}
-function nutSave(){const n=S.nut;S.nutHist[n.date]={w:n.water.reduce((a,b)=>a+b,0),m:n.milk,p:proTotal(n)};save()}
+function nutSave(){const n=S.nut;S.nutHist[n.date]={w:n.water.reduce((a,b)=>a+b,0),m:n.milk,p:proTotal(n),pc:PROTEIN.filter(x=>n.protein[x[0]]).length};save();window.renderToday&&renderToday()}
 function nextWater(){const d=new Date(),m=d.getHours()*60+d.getMinutes();return WATER_TIMES.findIndex(t=>t[0]*60+t[1]>=m-15)}
 function renderNut(){
   const n=nutToday();const wml=n.water.reduce((a,b)=>a+b,0);
@@ -1194,7 +1251,108 @@ $('log-sess').onclick=()=>{const t=$('sess-topic').value;S.topics[t]=(S.topics[t
 
 /* ---------- init ---------- */
 showSub(S.sub||'build');
-showView(S.view||'physical');
+/* ================= TODAY SCREEN ================= */
+const SESSION_NAMES={1:'Legs A',2:'Push A',3:'Pull A',4:'Legs B',5:'Push B',6:'Raw day',0:'Pull B'};
+const SKIP_MAIN=/^(Priming|Warm-up|Single-leg glute bridge)/;
+function mainLifts(d){const p=PROGRAM.find(x=>x.name===MAINDAY[d]);return p?p.ex.filter(e=>!SKIP_MAIN.test(e[0])&&!(d!==0&&/Sun only/.test(e[0]))):[]}
+function beatLine(name){const L=(S.logs[name]||[]).slice().sort((a,b)=>a.d<b.d?-1:1),t=isoToday();const prev=L.filter(x=>x.d<t).pop(),today=L.find(x=>x.d===t);
+  if(today)return '<b>'+name.split(',')[0]+'</b> · today '+logLine(today)+(prev?(sum(today.reps)>sum(prev.reps)?' <span style="color:var(--blue)">✓ beat</span>':''):'');
+  return '<b>'+name.split(',')[0]+'</b> · '+(prev?logLine(prev)+' → <span style="color:var(--blue);font-weight:700">beat '+sum(prev.reps)+'</span>':'<span class="muted">no log yet, set it</span>')}
+function renderToday(){
+  if(!window._todayReady||!$('v-today'))return;
+  const n=nutToday(),d=new Date().getDay(),k=keyFor(new Date());
+  $('td-date').textContent=new Date().toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'});
+  const W=winData();
+  $('td-win-n').innerHTML=W.n+'<small> / 4 sessions</small>';$('td-win-legs').innerHTML='Legs A '+(W.legsA?'<b style="color:var(--blue)">✓</b>':'not yet');
+  const pill=$('td-win-pill');pill.textContent=W.full?'FULL WEEK':W.won?'WIN':'IN PROGRESS';pill.className='win-pill'+(W.won?' on':'');
+  $('td-warn').style.display=W.missed?'block':'none';
+  const wml=n.water.reduce((a,b)=>a+b,0);$('td-water').innerHTML=wml.toLocaleString()+'<small> / 2,500ml</small>';$('td-water-bar').style.width=Math.min(100,wml/2500*100)+'%';
+  $('td-milk').innerHTML=n.milk+'<small> / 3+</small>';
+  // timeline
+  const bfI=(S.bfPick&&S.bfPick.date===k)?S.bfPick.idx:bfStart,bf=BREAKFASTS[bfI],ln=LUNCHES[(S.lunch&&S.lunch.pick)||0];
+  const lifts=mainLifts(d).slice(0,2);
+  const att={
+    'Breakfast':'<div class="att"><b>'+bf.n+'</b> · '+bf.p+'<div class="small muted">'+bf.t+'</div></div>',
+    'Gym':'<div class="att"><div class="row"><b>'+DN[d]+' · '+(MAINDAY[d]?(MAINDAY[d]==='Raw day'?'Raw day':SESSION_NAMES[d]):w.main)+'</b><span class="pill" data-open="1" style="cursor:pointer">Open ›</span></div>'+lifts.map(e=>'<div class="btb">'+beatLine(e[0])+'</div>').join('')+'</div>',
+    'Lunch + glass of water':'<div class="att"><b>'+ln.n+'</b> · '+ln.p+' protein<div class="small muted">'+ln.t+'</div></div>'
+  };
+  const homeEx=PROGRAM.find(x=>x.name==='Home').ex.filter(e=>HOMEDAYS[d].includes(e[0])).map(e=>e[0].split(',')[0]);
+  const items=DEFDAY.map(x=>({t:x[0],x:x[1],store:'day'}));
+  // insert evening home extras after dinner, and nightly mobility before wind-down
+  const iDinner=items.findIndex(x=>/^Dinner/.test(x.x));
+  items.splice(iDinner+1,0,{t:'Eve',x:'Home extras',store:'xtra',att:'<div class="att small">'+homeEx.join(' · ')+'</div>'});
+  const iWind=items.findIndex(x=>x.x==='Wind-down');
+  items.splice(iWind,0,{t:'',x:'Nightly mobility · ~8 min',store:'mob',att:'<div class="att small">90/90 switches · hip flexor 45s/side · deep squat 60s · thoracic rotation</div>'});
+  items[iWind+1].att='<div class="att small">In bed: phone away, belly breathing, face heavy (2 min). Release section has the guided version.</div>';
+  S.tdx=(S.tdx&&S.tdx.date===k)?S.tdx:{date:k,t:{}};
+  const isDone=it=>it.store==='day'?!!n.day[it.x]:it.store==='mob'?!!S.daily['Mobility']:!!S.tdx.t[it.x];
+  const nowM=new Date().getHours()*60+new Date().getMinutes();
+  const toM=t=>{const m=t.match(/(\d+):(\d+)/);if(!m)return null;let h=+m[1];if(h<8)h+=12;if(h===12&&t==='12:00')h=24;if(h<9&&+m[1]===1)h=25;return h*60+ +m[2]};
+  let nextMarked=false;
+  $('td-tl').innerHTML=items.map((it,i)=>{const dn=isDone(it);let cls='tl'+(dn?' done':'');const m=toM(it.t);if(!dn&&!nextMarked&&m!==null&&m+60>=nowM){cls+=' now';nextMarked=true}
+    const key=it.x.replace(/:.*$/,'').replace(/ \(.*$/,'');const a=it.att||att[it.x]||att[key]||'';
+    return '<div class="'+cls+'" data-i="'+i+'"><span class="tt">'+it.t+'</span><span class="box">'+tickSVG+'</span><div class="tx">'+it.x+a+'</div></div>'}).join('');
+  $('td-tl').querySelectorAll('.tl').forEach(el=>el.onclick=ev=>{
+    if(ev.target.closest('[data-open]')){$('today-card').onclick();return}
+    if(ev.target.closest('.att'))return;
+    const it=items[+el.dataset.i];
+    if(it.store==='day'){n.day[it.x]=!n.day[it.x];save()}
+    else if(it.store==='mob'){S.daily['Mobility']=!S.daily['Mobility'];save();checklist($('daily'),DAILY,S.daily,window._dailyChange)}
+    else{S.tdx.t[it.x]=!S.tdx.t[it.x];save()}
+    renderToday();renderNut();
+  });
+  // export button
+  const sun=d===0;$('td-export').classList.toggle('sun',sun);$('td-export-note').textContent=sun?'It\'s Sunday. Send the week to your coach.':'Copies this week (Mon to today).';
+}
+window.renderToday=renderToday;
+$('td-w-g').onclick=()=>{S.nut.water.push(250);nutSave();renderNut()};
+$('td-w-b').onclick=()=>{S.nut.water.push(500);nutSave();renderNut()};
+$('td-w-undo').onclick=()=>{S.nut.water.pop();nutSave();renderNut()};
+$('td-m-add').onclick=()=>{S.nut.milk++;nutSave();renderNut()};
+$('td-m-undo').onclick=()=>{if(S.nut.milk>0)S.nut.milk--;nutSave();renderNut()};
+
+/* weekly export */
+function weekSummary(){
+  const days=weekDays(),t=new Date();t.setHours(0,0,0,0);const W=winData();
+  const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const f=d=>d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
+  const past=days.filter(d=>d<=t);const L=[];const flags=[];
+  L.push('PERFECTCHAOS · WEEK '+f(days[0])+' – '+f(days[6]));L.push('');
+  L.push('SESSIONS ('+W.n+')');
+  past.forEach(d=>{const on=sessionOn(keyFor(d));L.push('- '+f(d)+': '+(on?SESSION_NAMES[d.getDay()]+' ✓':(+d===+t?'today, not logged yet ('+SESSION_NAMES[d.getDay()]+')':'missed ('+SESSION_NAMES[d.getDay()]+')')));if(!on&&d<t)flags.push('Missed '+f(d)+' ('+SESSION_NAMES[d.getDay()]+')')});
+  L.push('Win the week: '+(W.full?'FULL WEEK':W.won?'WIN':'not won yet')+' · '+W.n+'/4 · Legs A '+(W.legsA?'done':'not done'));
+  if(!W.legsA)flags.push('Legs A not done');
+  L.push('');L.push('LIFTS');
+  let any=false;
+  past.forEach(d=>{const ds=iso(d);const rows=Object.entries(S.logs||{}).map(([n,arr])=>[n,arr.find(x=>x.d===ds)]).filter(r=>r[1]);
+    if(!rows.length)return;any=true;L.push(f(d)+':');
+    rows.forEach(([n,x])=>{L.push('  '+n+': '+(x.w?x.w+'kg × ':'')+x.reps.join(', ')+' ('+sum(x.reps)+' total)'+(x.note?' · note: '+x.note:''));
+      if(x.note&&/pain|hurt|sore|tweak|click|sharp|left|hik|broke|form|fail/i.test(x.note))flags.push(n.split(',')[0]+' ('+f(d)+'): '+x.note)})});
+  if(!any)L.push('No lifts logged.');
+  L.push('');L.push('BODYWEIGHT');
+  const bw=(S.weights||[]).filter(x=>x.d>=iso(days[0])&&x.d<=iso(days[6])).sort((a,b)=>a.d<b.d?-1:1);
+  L.push(bw.length?bw.map(x=>new Date(x.d+'T00:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'})+': '+x.kg.toFixed(1)+'kg').join('\n'):'No weigh-in this week.');
+  if(!bw.length)flags.push('No weigh-in this week');
+  L.push('');L.push('NUTRITION (daily averages, days tracked)');
+  const H=past.map(d=>(S.nutHist||{})[keyFor(d)]).filter(Boolean);
+  if(H.length){const av=a=>a.reduce((x,y)=>x+y,0)/H.length;
+    L.push('- Water: '+Math.round(av(H.map(h=>h.w))).toLocaleString()+'ml / 2,500');
+    L.push('- Milk: '+av(H.map(h=>h.m)).toFixed(1)+' glasses / 3+');
+    L.push('- Protein checklist: '+av(H.map(h=>h.pc!=null?h.pc:0)).toFixed(1)+' / 6 meals ticked (~'+Math.round(av(H.map(h=>h.p)))+'g est.)');
+    L.push('- Days tracked: '+H.length+' / '+past.length)}
+  else L.push('Nothing tracked.');
+  L.push('');L.push('FLAGS');L.push(flags.length?flags.map(x=>'- '+x).join('\n'):'- None');
+  return L.join('\n');
+}
+$('td-export').onclick=()=>{const txt=weekSummary();
+  const ok=()=>{$('td-export').textContent='Copied ✓';setTimeout(()=>{$('td-export').textContent='Copy weekly summary for coach'},1800)};
+  const fail=()=>{$('exp-text').value=txt;$('exp-sheet').classList.add('on')};
+  try{navigator.clipboard.writeText(txt).then(ok,fail)}catch(e){fail()}};
+document.querySelectorAll('[data-close=exp-sheet]').forEach(b=>b.onclick=()=>$('exp-sheet').classList.remove('on'));
+
+window._todayReady=true;
+renderToday();
+showView('today');
 /* no zoom outside the handbook */
 ['gesturestart','gesturechange'].forEach(ev=>document.addEventListener(ev,e=>{if(!e.target.closest||!e.target.closest('.hb'))e.preventDefault()},{passive:false}));
 let lastTouch=0;document.addEventListener('touchend',e=>{const t=Date.now();if(t-lastTouch<300&&!(e.target.closest&&e.target.closest('.hb,input,select'))){e.preventDefault();e.target.click&&e.target.click()}lastTouch=t},{passive:false});
